@@ -1,19 +1,20 @@
 """
-d2lfl.lootfilter
-================
+d2lfl.bh.lootfilter
+===================
 
-This module contains APIs intended for user consumption.
+This module contains BH lootfilter APIs intended for user consumption.
 """
 
 from io import StringIO
 from typing import Optional
 
-from .bh import BHConfiguration, BHItemDisplay, BHItemDisplayFilterName
+from .config import BHConfiguration, BHItemDisplay, BHItemDisplayFilterName
+from .expression import bh_and, bh_not, bh_or
 
 
-class LootFilter:
+class BHLootFilter:
     """
-    Represents a loot filter.
+    Represents a BH maphack loot filter.
     """
 
     def __init__(self, name: str) -> None:
@@ -34,6 +35,12 @@ class LootFilter:
         self._filter_level_num += 1
         return level_num
 
+    def add_display_rule_raw(self, condition: str, output: str) -> None:
+        """
+        Adds a "raw" display rule to this loot filter.
+        """
+        self._bh_config.add(BHItemDisplay(condition, output))
+
     def add_display_rule(
         self,
         condition: str,
@@ -51,12 +58,33 @@ class LootFilter:
         """
         sio = StringIO()
         sio.write("{name}")
-        if description is None:
+        if description is not None:
             sio.write("{{{description}}}")
         if not terminate:
             sio.write("%CONTINUE%")
-        item_display_output = sio.getvalue().format(name=name, description=description)
-        self._bh_config.add(BHItemDisplay(condition, item_display_output))
+        output = sio.getvalue().format(name=name, description=description)
+        self.add_display_rule_raw(condition, output)
+
+    @classmethod
+    def eand(cls, *expressions: str) -> str:
+        """
+        Combines loot filter expressons using logical AND.
+        """
+        return bh_and(*expressions)
+
+    @classmethod
+    def eor(cls, *expressions: str) -> str:
+        """
+        Combines loot filter expressions using logical OR.
+        """
+        return bh_or(*expressions)
+
+    @classmethod
+    def enot(cls, expression: str) -> str:
+        """
+        Inverts a loot filter expression using logical NOT.
+        """
+        return bh_not(expression)
 
     def hide(self, condition: str) -> None:
         """
@@ -64,7 +92,7 @@ class LootFilter:
 
         :param condition: the item matching condition
         """
-        return self.add_display_rule(condition=condition, name="", description=None, terminate=True)
+        return self.add_display_rule_raw(condition=condition, output="")
 
     def render(self) -> bytes:
         """

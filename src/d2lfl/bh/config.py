@@ -48,6 +48,11 @@ class BHConfigurationItem(metaclass=ABCMeta):
 
 
 class BHItemDisplay(BHConfigurationItem):
+    """
+    BHConfigurationItem representing an ItemDisplay configuration.
+
+    This is used to generate loot filter rules.
+    """
     def __init__(self, condition: str, output: str) -> None:
         self.condition = condition
         self.output = output
@@ -56,7 +61,26 @@ class BHItemDisplay(BHConfigurationItem):
         return f"ItemDisplay[{self.condition}]: {self.output}]"
 
 
+class BHItemDisplayFilterName(BHConfigurationItem):
+    """
+    BHConfigurationItem representing an ItemDisplayFilterName configuration.
+
+    This is used to create filter strictness levels.
+    """
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def render(self) -> str:
+        return f"ItemDisplayFilterName[]: {self.name}"
+
+
 class BHConfiguration:
+    """
+    Object representing a BH maphack configuration.
+
+    BHConfiguration objects are composed of zero or more
+    BHConfigurationItem objects.
+    """
     def __init__(self, encoding: Literal["windows-1252", "utf-8"] = "windows-1252") -> None:
         # The Project Diablo 2 wiki says that to support special characters,
         # we must encode the file using "ANSI" (see below). This is a
@@ -108,4 +132,3 @@ class BHConfiguration:
         sio.truncate()
 
         return sio.getvalue().encode(self.encoding)
-

@@ -14,4 +14,8 @@ even allow filter users to pass parameters to control how the
 loot filter operates.
 """
 
-from .lootfilter import LootFilter
+from .bh.lootfilter import BHLootFilter
+
+__all__ = [
+    "BHLootFilter",
+]
