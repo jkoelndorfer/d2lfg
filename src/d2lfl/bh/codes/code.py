@@ -28,6 +28,11 @@ class BHCode(metaclass=ABCMeta):
         """
         return f"%{self.code}%"
 
+    def __str__(self) -> str:
+        raise NotImplementedError(
+            f"can't convert {self.__class__.__name__} to string; must use code or output property"
+        )
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}: {self.code}"
 

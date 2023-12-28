@@ -2,55 +2,70 @@
 d2lfl.bh.expression
 ===================
 
-This module contains helper functions to work with
-BH maphack loot filter expressions.
+This code defines BH maphack loot filter expression classes.
 """
 
-import re
-
-_whitespace = re.compile(r"\s+")
+from enum import auto, Enum
 
 
-def bh_and(*expressions: str) -> str:
+class BHOperator(Enum):
+    #: Adds the two operands together.
+    ADD = auto()
+
+    #: Logically ands the two operands together.
+    AND = auto()
+
+    #: Checks the operands for equality.
+    EQUALS = auto()
+
+    #: Checks if the left operand is greater than the right operand.
+    GREATER_THAN = auto()
+
+    #: Checks if the left operand is less than the right operand.
+    LESS_THAN = auto()
+
+    #: Inverses the right operand. If this operator is used, there is no left operand.
+    NOT = auto()
+
+    #: Logically ors the two operands together.
+    OR = auto()
+
+
+class BHOperatorMixin:
     """
-    Given a set of BH ItemDisplay expressions, returns a BH ItemDisplay
-    expression logically ANDs them together.
+    Mixin class that defines operators for BHExpression and BHAtom.
     """
-    return " ".join(bh_normalize(e) for e in expressions)
+    def _valid_expression(self, operator: BHOperator, right_operand) -> bool:
+        return isinstance(right_operand, (BHAtom, BHExpression, int, str))
+
+    def _new_expression(self, operator: BHOperator, right_operand) -> "BHExpression":
+        if not self._valid_expression(operator, right_operand)
+            raise NotImplementedError(
+                f"cannot compare {self.__class__.__name__} to {right_operand.__class__.__name__}"
+            )
 
 
-def bh_not(expression: str) -> str:
+    def __gt__(self, other: object) -> "BHExpression":
+        if not self._comparable(other):
+            raise NotImplementedError("cannot compare")
+
+
+class BHExpression:
     """
-    Given a BH ItemDisplay expression, returns a BH ItemDisplay
-    expression that is the logical inverse (NOT).
+    A BHExpression is composed of at least one BHAtom (or integer) and an operator.
     """
+    def __init__(self, left_operand, operator, right_operand) -> None:
+        self.left_operand = left_operand
+        self.operator = operator
+        self.right_operand = right_operand
 
-    return f"!{bh_normalize(expression)}"
 
-
-def bh_normalize(expression: str) -> str:
+class BHAtom:
     """
-    Given a BH ItemDisplay expression, produces an equivalent expression
-    that is normalized.
+    A BHAtom is the smallest unit in an expression.
 
-    Normalized expressions have extraneous whitespace removed and are
-    wrapped in parenthesis if required.
+    It cannot be divided further without altering the meaning of
+    a filter rule.
+
+    Examples of atoms include integers and BHCode objects.
     """
-    n = _whitespace.sub(" ", expression.strip())
-
-    has_enclosing_parens = n.startswith("(") and n.endswith(")")
-    has_whitespace = " " in n
-    if has_enclosing_parens:
-        return n
-    elif has_whitespace:
-        return f"({n})"
-    else:
-        return n
-
-
-def bh_or(*expressions: str) -> str:
-    """
-    Given a set of BH ItemDisplay expressions, returns a BH ItemDisplay
-    expression logically ORs them together.
-    """
-    return bh_normalize(" OR ".join(bh_normalize(e) for e in expressions))
