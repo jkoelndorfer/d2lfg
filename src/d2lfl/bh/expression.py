@@ -5,67 +5,56 @@ d2lfl.bh.expression
 This code defines BH maphack loot filter expression classes.
 """
 
-from enum import auto, Enum
+from typing import Union
 
+from .code import BHCode
+from .itemdisplay import ItemDisplayConditionable
+from .operator import BHOperator
 
-class BHOperator(Enum):
-    #: Adds the two operands together.
-    ADD = auto()
-
-    #: Logically ands the two operands together.
-    AND = auto()
-
-    #: Checks the operands for equality.
-    EQUALS = auto()
-
-    #: Checks if the left operand is greater than the right operand.
-    GREATER_THAN = auto()
-
-    #: Checks if the left operand is less than the right operand.
-    LESS_THAN = auto()
-
-    #: Inverses the right operand. If this operator is used, there is no left operand.
-    NOT = auto()
-
-    #: Logically ors the two operands together.
-    OR = auto()
+Operand = Union[int, str, "BHCode", "BHExpression"]
 
 
 class BHOperatorMixin:
     """
     Mixin class that defines operators for BHExpression and BHAtom.
     """
-    def _valid_expression(self, operator: BHOperator, right_operand) -> bool:
-        return isinstance(right_operand, (BHAtom, BHExpression, int, str))
-
     def _new_expression(self, operator: BHOperator, right_operand) -> "BHExpression":
-        if not self._valid_expression(operator, right_operand)
-            raise NotImplementedError(
-                f"cannot compare {self.__class__.__name__} to {right_operand.__class__.__name__}"
+        if operator.unary:
+            return BHExpression(
+                left_operand=None,
+                operator=operator,
+                right_operand=right_operand
             )
-
 
     def __gt__(self, other: object) -> "BHExpression":
         if not self._comparable(other):
             raise NotImplementedError("cannot compare")
 
 
-class BHExpression:
+class BHExpression(ItemDisplayConditionable):
     """
-    A BHExpression is composed of at least one BHAtom (or integer) and an operator.
+    A BHExpression is composed of at least one Operand and an operator.
     """
     def __init__(self, left_operand, operator, right_operand) -> None:
         self.left_operand = left_operand
         self.operator = operator
         self.right_operand = right_operand
 
+    def item_display_condition(self) -> str:
+        return "TODO"
 
-class BHAtom:
-    """
-    A BHAtom is the smallest unit in an expression.
+    @classmethod
+    def _parens_required_for(cls, operator: BHOperator, operand: Operand) -> bool:
+        """
+        If an expression is formed with the given operator and operand,
+        returns True if the operand requires the protection of parenthesis
+        to maintain its intended meaning. Returns False if parenthesis are
+        not required.
+        """
+        if isinstance(operand, str):
+            # String expressions could be anything! Rather than try to parse
+            # the string expression, let's just always wrap it in parenthesis.
+            return True
 
-    It cannot be divided further without altering the meaning of
-    a filter rule.
-
-    Examples of atoms include integers and BHCode objects.
-    """
+        if isinstance(operand, (int, BHCode)):
+            # Integers are atomic

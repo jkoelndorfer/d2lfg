@@ -9,7 +9,6 @@ from io import StringIO
 from typing import Optional
 
 from .config import BHConfiguration, BHItemDisplay, BHItemDisplayFilterName
-from .expression import bh_and, bh_not, bh_or
 
 
 class BHLootFilter:
@@ -64,27 +63,6 @@ class BHLootFilter:
             sio.write("%CONTINUE%")
         output = sio.getvalue().format(name=name, description=description)
         self.add_display_rule_raw(condition, output)
-
-    @classmethod
-    def eand(cls, *expressions: str) -> str:
-        """
-        Combines loot filter expressons using logical AND.
-        """
-        return bh_and(*expressions)
-
-    @classmethod
-    def eor(cls, *expressions: str) -> str:
-        """
-        Combines loot filter expressions using logical OR.
-        """
-        return bh_or(*expressions)
-
-    @classmethod
-    def enot(cls, expression: str) -> str:
-        """
-        Inverts a loot filter expression using logical NOT.
-        """
-        return bh_not(expression)
 
     def hide(self, condition: str) -> None:
         """

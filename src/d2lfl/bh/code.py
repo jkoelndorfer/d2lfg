@@ -1,14 +1,17 @@
 """
-d2lfl.bh.codes.code
-===================
+d2lfl.bh.code
+=============
 
 This module contains the definition for a BH maphack
-loot filter code.
+loot filter codes.
 """
 
-from abc import ABCMeta, abstractproperty
+from .itemdisplay import ItemDisplayConditionable, ItemDisplayOutputable
 
-class BHCode(metaclass=ABCMeta):
+from abc import abstractproperty
+
+
+class BHCode(ItemDisplayConditionable, ItemDisplayOutputable):
     """
     The base class for BH loot filter codes.
     """
@@ -19,6 +22,12 @@ class BHCode(metaclass=ABCMeta):
         Returns the bare code, suitable for use in a BH ItemDisplay condition.
         """
         raise NotImplementedError("subclasses must implement BHCode.code")
+
+    def item_display_condition(self) -> str:
+        return self.code
+
+    def item_display_output(self) -> str:
+        return self.output
 
     @property
     def output(self) -> str:
@@ -96,10 +105,10 @@ class BHRegularSkill(BHCode):
 
 class BHSkill:
     """
-    Wrapper for BHPlusSkill, BHOSkill, and BHChargeSkill.
+    Wrapper for BHRegularSkill, BHOSkill, and BHChargeSkill.
 
     This class is a "dispatch" by which loot filter authors can
-    access +skill, oskill, and skill charge codes.
+    access regular skill, oskill, and skill charge codes.
     """
     def __init__(self, skill_num: int, skill_name: str) -> None:
         self.skill_num = skill_num
