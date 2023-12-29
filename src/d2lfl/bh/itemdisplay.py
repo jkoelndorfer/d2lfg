@@ -7,6 +7,7 @@ This module contains ItemDisplay-related interfaces.
 
 from abc import ABCMeta, abstractmethod
 
+
 class ItemDisplayConditionable(metaclass=ABCMeta):
     """
     Base class for objects which can be used in a BH ItemDisplay filter.
