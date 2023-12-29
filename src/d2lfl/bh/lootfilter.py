@@ -9,6 +9,8 @@ from io import StringIO
 from typing import Optional
 
 from .config import BHConfiguration, BHItemDisplay, BHItemDisplayFilterName
+from .itemdisplay.expression import BHExpression
+from .itemdisplay.output import BHStandardCodes
 
 
 class BHLootFilter:
@@ -42,7 +44,7 @@ class BHLootFilter:
 
     def add_display_rule(
         self,
-        condition: str,
+        condition: BHExpression,
         name: str,
         description: Optional[str] = None,
         terminate: bool = False,
@@ -56,21 +58,21 @@ class BHLootFilter:
         :param terminate: if True, this display rule is terminal (the "%CONTINUE%" keyword is not included)
         """
         sio = StringIO()
-        sio.write("{name}")
+        sio.write(f"{name}")
         if description is not None:
-            sio.write("{{{description}}}")
+            sio.write(f"{{{description}}}")
         if not terminate:
-            sio.write("%CONTINUE%")
+            sio.write(str(BHStandardCodes.CONTINUE))
         output = sio.getvalue().format(name=name, description=description)
-        self.add_display_rule_raw(condition, output)
+        self.add_display_rule_raw(condition.as_condition_str(), output)
 
-    def hide(self, condition: str) -> None:
+    def hide(self, condition: BHExpression) -> None:
         """
         Hides item matching the given `condition`.
 
         :param condition: the item matching condition
         """
-        return self.add_display_rule_raw(condition=condition, output="")
+        return self.add_display_rule_raw(condition=condition.as_condition_str(), output="")
 
     def render(self) -> bytes:
         """

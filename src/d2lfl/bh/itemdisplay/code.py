@@ -9,22 +9,22 @@ loot filter codes.
 from .expression import BHExpression
 from .operator import BHOperator
 
-from abc import ABCMeta, abstractproperty
 
-
-class BHCode(metaclass=ABCMeta):
+class BHCode:
     """
     The base class for BH loot filter output codes.
     """
+    def __init__(self, code: str) -> None:
+        self._code = code
 
-    @abstractproperty
+    @property
     def code(self) -> str:
         """
         The code's value, as a string.
 
         For output codes, this *MUST NOT* include wrapping "%" symbols.
         """
-        raise NotImplementedError(f"{self.__class__.__name__} subclasses must implement code")
+        return self._code
 
     def __str__(self) -> str:
         return f"%{self.code}%"
@@ -33,23 +33,18 @@ class BHCode(metaclass=ABCMeta):
         return f"{self.__class__.__name__}: {self.code}"
 
 
-class BHOutputCode(BHCode):
-    def __init__(self, code: str) -> None:
-        self._code = code
-
-    @property
-    def code(self) -> str:
-        return self._code
-
-
 class BHFilterCode(BHCode, BHExpression):
-    @abstractproperty
-    def code(self) -> str:
-        """
-        Returns the bare code, suitable for use in a BH ItemDisplay condition.
-        """
-        raise NotImplementedError("subclasses must implement BHCode.code")
+    """
+    A BH loot filter output code that can also be used in a filter expression.
 
+    For use in a loot filter expression, combine this with other
+    expressions using the standard loot filtering operators
+    (~, >, <, &, |). To get the code for use in a loot filter
+    string (which is not recommended), call as_condition_str().
+
+    For use in output strings, simply interpolate this object into
+    the string. The required "%" symbols will be included automatically.
+    """
     def as_condition_str(self) -> str:
         return self.code
 
@@ -57,7 +52,7 @@ class BHFilterCode(BHCode, BHExpression):
         return False
 
 
-class BHChargeSkill(BHCode):
+class BHChargeSkill(BHFilterCode):
     """
     Class implementing a BH charge skill code.
 
@@ -71,8 +66,11 @@ class BHChargeSkill(BHCode):
     def code(self) -> str:
         return f"CHSK{self.parent.skill_num}"
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
 
-class BHOSkill(BHCode):
+
+class BHOSkill(BHFilterCode):
     """
     Class implementing a BH oskill code.
 
@@ -86,8 +84,11 @@ class BHOSkill(BHCode):
     def code(self) -> str:
         return f"OS{self.parent.skill_num}"
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
 
-class BHRegularSkill(BHCode):
+
+class BHRegularSkill(BHFilterCode):
     """
     Class implementing a BH regular +skill code.
 
@@ -99,6 +100,9 @@ class BHRegularSkill(BHCode):
     @property
     def code(self) -> str:
         return f"SK{self.parent.skill_num}"
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
 
 
 class BHSkill:
@@ -112,9 +116,17 @@ class BHSkill:
         self.skill_num = skill_num
         self.skill_name = skill_name
 
-        self.regular = BHRegularSkill(self)
-        self.oskill = BHOSkill(self)
-        self.charges = BHChargeSkill(self)
+        self.sk = BHRegularSkill(self)
+        self.os = BHOSkill(self)
+        self.chsk = BHChargeSkill(self)
+
+    def __str__(self) -> str:
+        raise NotImplementedError(
+            f"{repr(self)} *NOT FOR USE IN STRING INTERPOLATION!* "
+            "Call .sk, .os, or .chsk to get regular skill, oskill, "
+            "or charge skill, respectively, for use in output. "
+            "For debug output, call repr() on this object."
+        )
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.skill_num}, {self.skill_name})"
@@ -133,6 +145,9 @@ class BHItemStat(BHCode):
     def code(self) -> str:
         return f"STAT{self.parent.stat_num}"
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.parent.stat_num}, {self.parent.stat_name})"
+
 
 class BHCharStat(BHCode):
     """
@@ -146,6 +161,9 @@ class BHCharStat(BHCode):
     @property
     def code(self) -> str:
         return f"CHARSTAT{self.parent.stat_num}"
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.parent.stat_num}, {self.parent.stat_name})"
 
 
 class BHStat:
@@ -161,6 +179,13 @@ class BHStat:
 
         self.char = BHCharStat(self)
         self.item = BHItemStat(self)
+
+    def __str__(self) -> str:
+        raise NotImplementedError(
+            f"{repr(self)} *NOT FOR USE IN STRING INTERPOLATION!* "
+            "Call .char or .item to get a character or item stat for use in output. "
+            "For debug output, call repr() on this object."
+        )
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.stat_num}, {self.stat_name})"

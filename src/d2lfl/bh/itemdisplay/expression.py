@@ -73,6 +73,18 @@ class BHExpression(metaclass=ABCMeta):
     def __gt__(self, other: BHOperand) -> "BHExpression":
         return self._compare_to(BHOperators.GT, other)
 
+    def __invert__(self) -> "BHExpression":
+        return BHCompoundExpression(None, BHOperators.NOT, self)
+
+    def __add__(self, other: BHOperand) -> "BHExpression":
+        return self._compare_to(BHOperators.ADD, other)
+
+    def __and__(self, other: BHOperand) -> "BHExpression":
+        return self._compare_to(BHOperators.AND, other)
+
+    def __or__(self, other: BHOperand) -> "BHExpression":
+        return self._compare_to(BHOperators.OR, other)
+
 
 class BHLiteralExpression(BHExpression):
     """
