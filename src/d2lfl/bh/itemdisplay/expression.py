@@ -13,7 +13,17 @@ from .operator import BHOperator, BHOperators
 BHOperand = Union[int, "BHExpression"]
 
 
+# See Project Diablo 2's ItemDisplay code:
+#
+# Initial development of this d2lfl:
+# https://github.com/Project-Diablo-2/BH/blob/b2f94ed72a9926b62d1c461ef5b10078d12999bb/BH/Modules/Item/ItemDisplay.cpp
+#
+# Current:
+# https://github.com/Project-Diablo-2/BH/blob/main/BH/Modules/Item/ItemDisplay.cpp
+#
 # ITEMDISPLAY EXPRESSION TESTING NOTES
+#
+# Tested with Project Diablo 2 Season 8 on 2023-12-29.
 #
 # --------------------
 #
@@ -50,6 +60,17 @@ BHOperand = Union[int, "BHExpression"]
 #
 # equivalent rule with parens:
 #    ((QTY=1 OR key) QTY=2) OR QTY=3
+#
+# --------------------
+#
+# The rule:
+#    ALVL>ILVL
+#
+# Applied to *ALL ITEMS*.
+#
+# Clearly this is bugged. Some BH ItemDisplay expressions
+# don't work.
+
 
 class BHExpression(metaclass=ABCMeta):
     """
@@ -149,7 +170,7 @@ class BHExpression(metaclass=ABCMeta):
 
 class BHLiteralExpression(BHExpression):
     """
-    A BHLiteralExpression is a "trap door" to support arbitary text in
+    A BHLiteralExpression allows for supporting arbitary text in
     BH loot filter expressions.
 
     Use of this class is discouraged. Prefer using d2lfl's built-in
