@@ -1,191 +1,170 @@
 """
-d2lfl.bh.itemdisplay.code
-=========================
+d2lfl.bh.itemdisplay.codes
+==========================
 
-This module contains the definition for a BH maphack
-loot filter codes.
+This module contains definitions for BH output codes
+which are *core to Diablo II* and whose meaning will
+not vary between different mods.
 """
 
-from .expression import BHExpression
-from .operator import BHOperator
+from .codetype import BHCode, BHFilterCode
+from .expression import BHLiteralExpression
 
 
-class BHCode:
+class _BHStandardCodes:
     """
-    The base class for BH loot filter output codes.
+    Class that defines BH standard output codes.
+
+    See https://wiki.projectdiablo2.com/wiki/Item_Filtering#Value_References
     """
-    def __init__(self, code: str) -> None:
-        self._code = code
 
-    @property
-    def code(self) -> str:
-        """
-        The code's value, as a string.
+    #: Current value of the item's name (or description)
+    #: as configured by previous loot filter rules using
+    #: %CONTINUE%. Uses the item's default game values if
+    #: they have not yet been modified.
+    NAME = BHCode("NAME")
 
-        For output codes, this *MUST NOT* include wrapping "%" symbols.
-        """
-        return self._code
+    #: Code indicating that ItemDisplay rule processing
+    #: should continue with the next matching rule.
+    #: If this code is absent and the rule matches, rule
+    #: processing terminates.
+    CONTINUE = BHCode("CONTINUE")
 
-    def __str__(self) -> str:
-        return f"%{self.code}%"
+    #: The character's current level.
+    #: Possible values: integers 1 - 99, inclusive.
+    CLVL = CHARACTER_LEVEL = BHFilterCode("CLVL")
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}: {self.code}"
+    #: The current difficulty.
+    #: Possible values: 0 - 2, inclusive.
+    #: 0 = Normal, 1 = Nightmare, 2 = Hell.
+    DIFF = DIFFICULTY = BHFilterCode("DIFF")
 
 
-class BHFilterCode(BHCode, BHExpression):
+class _BHItemCodes:
     """
-    A BH loot filter output code that can also be used in a filter expression.
-
-    For use in a loot filter expression, combine this with other
-    expressions using the standard loot filtering operators
-    (~, >, <, &, |). To get the code for use in a loot filter
-    string (which is not recommended), call as_condition_str().
-
-    For use in output strings, simply interpolate this object into
-    the string. The required "%" symbols will be included automatically.
+    Class that defines BH output codes for items.
     """
-    def as_condition_str(self) -> str:
-        return self.code
 
-    def requires_parens_for(self, operator: BHOperator) -> bool:
-        return False
+    #: The short code that is used to identify the item
+    #: in game data files and loot filter rules.
+    #: Possible values: lots! Usually a 3 or 4 character code,
+    #: e.g. "ssd" for a short sword.
+    #:
+    #: See https://wiki.projectdiablo2.com/wiki/Item_Filtering#Item_Codes
+    CODE = ITEM_CODE = BHCode("CODE")
+
+    #: The level requirement of the item.
+    #: Possible values: integers 0 - 99, inclusive.
+    LVLREQ = LEVEL_REQUIREMENT = BHFilterCode("LVLREQ")
+
+    #: The number of items in the stack.
+    #: Possible values: integers 1 - 350, inclusive.
+    QTY = QUANTITY = BHFilterCode("QTY")
+
+    #: The vendor price of the item.
+    #: Possible values: integers 1 - 35000, inclusive.
+    PRICE = VENDOR_PRICE = BHFilterCode("PRICE")
+
+    #: Amount of gold in a gold pile.
+    #: Per https://wiki.projectdiablo2.com/wiki/Item_Filtering#Info_Codes,
+    #: gold's "item name" may not be modified.
+    #: Possible values: positive integers.
+    GOLD = BHFilterCode("GOLD")
 
 
-class BHChargeSkill(BHFilterCode):
+class _BHEquipmentCodes:
     """
-    Class implementing a BH charge skill code.
-
-    This can be used to filter for items that grant skill charges,
-    i.e. "Level X skill (Y/Z Charges)".
+    Class that defines BH output codes for equippable items.
     """
-    def __init__(self, parent: "BHSkill") -> None:
-        self.parent = parent
 
-    @property
-    def code(self) -> str:
-        return f"CHSK{self.parent.skill_num}"
+    #: Whether the item is ethereal.
+    #: *ETH CANNOT BE USED IN ITEM TEXT*!
+    ETH = ETHEREAL = BHLiteralExpression("ETH")
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
+    #: The item's item level ("ilvl").
+    #: Possible values: integers 1 - 99, inclusive.
+    ILVL = ITEM_LEVEL = BHFilterCode("ILVL")
+
+    #: The item's affix level ("alvl"). This determines
+    #: what affixes a piece of gear can have.
+    #: Possible values: integers 1 - 99, inclusive.
+    ALVL = AFFIX_LEVEL = BHFilterCode("ALVL")
+
+    #: The item's quality level.
+    #: TODO: Possible values
+    QLVL = QUALITY_LEVEL = BHFilterCode("QLVL")
+
+    #: If the item is used in crafting, this will be the
+    #: affix level of the crafting result.
+    #: Possible values: integers 1 - 99, inclusive.
+    CRAFTALVL = CRAFTING_AFFIX_LEVEL = BHFilterCode("CRAFTALVL")
+
+    #: Melee weapon range.
+    #: Possible values: integers 0 - 5, inclusive.
+    RANGE = BHFilterCode("RANGE")
+
+    #: The if the item is a weapon, the speed modifier.
+    #: Possible values: integers -60 - 20, inclusive.
+    WPNSPD = WEAPON_SPEED = BHFilterCode("WPNSPD")
 
 
-class BHOSkill(BHFilterCode):
+class _BHColorCodes:
     """
-    Class implementing a BH oskill code.
+    Class that defines BH output color codes.
 
-    This can be used in an oskill filter. Unlike regular skills,
-    oskills do not have a class restriction on the skill grant.
+    See https://wiki.projectdiablo2.com/wiki/Item_Filtering#Colors.
     """
-    def __init__(self, parent: "BHSkill") -> None:
-        self.parent = parent
+    #: Used by default for regular, non-magic items
+    #: which ARE NOT socketed or ethereal.
+    WHITE = BHCode("WHITE")
 
-    @property
-    def code(self) -> str:
-        return f"OS{self.parent.skill_num}"
+    #: Used by default for regular, non-magic items
+    #: which ARE socketed or ethereal.
+    GRAY = BHCode("GRAY")
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
+    #: Used by default for magic items.
+    BLUE = BHCode("BLUE")
 
+    #: Used by default for rare items
+    YELLOW = BHCode("YELLOW")
 
-class BHRegularSkill(BHFilterCode):
-    """
-    Class implementing a BH regular +skill code.
+    #: Used by default for unique items and runewords.
+    GOLD = BHCode("GOLD")
 
-    This can be used in a "+X to Skill (*class* only)" filter.
-    """
-    def __init__(self, parent: "BHSkill") -> None:
-        self.parent = parent
+    #: Used by default for set items.
+    GREEN = BHCode("GREEN")
 
-    @property
-    def code(self) -> str:
-        return f"SK{self.parent.skill_num}"
+    #: Not used by default.
+    DARK_GREEN = BHCode("DARK_GREEN")
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
+    #: Not used by default.
+    TAN = BHCode("TAN")
 
+    #: Not used by default.
+    BLACK = BHCode("BLACK")
 
-class BHSkill:
-    """
-    Wrapper for BHRegularSkill, BHOSkill, and BHChargeSkill.
+    #: Not used by default.
+    PURPLE = BHCode("PURPLE")
 
-    This class is a "dispatch" by which loot filter authors can
-    access regular skill, oskill, and skill charge codes.
-    """
-    def __init__(self, skill_num: int, skill_name: str) -> None:
-        self.skill_num = skill_num
-        self.skill_name = skill_name
+    #: Used by default for broken and unusable items.
+    RED = BHCode("RED")
 
-        self.sk = BHRegularSkill(self)
-        self.os = BHOSkill(self)
-        self.chsk = BHChargeSkill(self)
+    #: Used by default for crafted items, endgame quest
+    #: items, and runes.
+    ORANGE = BHCode("ORANGE")
 
-    def __str__(self) -> str:
-        raise NotImplementedError(
-            f"{repr(self)} *NOT FOR USE IN STRING INTERPOLATION!* "
-            "Call .sk, .os, or .chsk to get regular skill, oskill, "
-            "or charge skill, respectively, for use in output. "
-            "For debug output, call repr() on this object."
-        )
+    #: This color is custom and only works in 3dfx (Glide) mode.
+    CORAL = BHCode("CORAL")
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.skill_num}, {self.skill_name})"
+    #: This color is custom and only works in 3dfx (Glide) mode.
+    SAGE = BHCode("SAGE")
+
+    #: This color is custom and only works in 3dfx (Glide) mode.
+    TEAL = BHCode("TEAL")
+
+    #: This color is custom and only works in 3dfx (Glide) mode.
+    LIGHT_GRAY = BHCode("LIGHT_GRAY")
 
 
-class BHItemStat(BHCode):
-    """
-    Class implementing a BH item stat.
-
-    This can be used to filter for stats on items.
-    """
-    def __init__(self, parent: "BHStat") -> None:
-        self.parent = parent
-
-    @property
-    def code(self) -> str:
-        return f"STAT{self.parent.stat_num}"
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.parent.stat_num}, {self.parent.stat_name})"
-
-
-class BHCharStat(BHCode):
-    """
-    Class implementing a BH character stat.
-
-    This can be used to filter for stats on the current character.
-    """
-    def __init__(self, parent: "BHStat") -> None:
-        self.parent = parent
-
-    @property
-    def code(self) -> str:
-        return f"CHARSTAT{self.parent.stat_num}"
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.parent.stat_num}, {self.parent.stat_name})"
-
-
-class BHStat:
-    """
-    Wrapper class for BHItemStat and BHCharStat.
-
-    This class is a "dispatch" by which loot filter authors can
-    access item stat and character stat codes.
-    """
-    def __init__(self, stat_num: int, stat_name: str) -> None:
-        self.stat_num = stat_num
-        self.stat_name = stat_name
-
-        self.char = BHCharStat(self)
-        self.item = BHItemStat(self)
-
-    def __str__(self) -> str:
-        raise NotImplementedError(
-            f"{repr(self)} *NOT FOR USE IN STRING INTERPOLATION!* "
-            "Call .char or .item to get a character or item stat for use in output. "
-            "For debug output, call repr() on this object."
-        )
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.stat_num}, {self.stat_name})"
+class BHCodes(_BHStandardCodes, _BHItemCodes, _BHEquipmentCodes, _BHColorCodes):
+    pass

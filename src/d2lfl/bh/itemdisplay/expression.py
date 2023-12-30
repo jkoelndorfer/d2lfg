@@ -6,10 +6,8 @@ This code defines BH maphack loot filter expression classes.
 """
 
 from abc import ABCMeta, abstractmethod
-from functools import cache
 from typing import Optional, Union
 
-from .code import BHCode
 from .operator import BHOperator, BHOperators
 
 BHOperand = Union[int, "BHExpression"]
@@ -17,7 +15,7 @@ BHOperand = Union[int, "BHExpression"]
 
 class BHExpression(metaclass=ABCMeta):
     """
-    A BHExpression is composed of at least one Operand and an operator.
+    A BHExpression is a loot filtering expression.
     """
 
     # The BHExpression interface *does not* use __str__ for this purpose
@@ -26,10 +24,10 @@ class BHExpression(metaclass=ABCMeta):
     # 1. Objects implicitly implement some version of __str__, which
     #    would make the interface definition pointless.
     #
-    # 2. BHCode objects can be used in filter expressions *AND* output
-    #    strings (i.e. item names and descriptions). Because output
-    #    strings are completely unstructured from the perspective of
-    #    this library, reserving __str__ for use in string templating
+    # 2. Some BHCode objects can be used in filter expressions *AND*
+    #    output strings (i.e. item names and descriptions). Because
+    #    output strings are completely unstructured from the perspective
+    #    of this library, reserving __str__ for use in string templating
     #    outputs makes good sense.
     @abstractmethod
     def as_condition_str(self) -> str:
@@ -84,6 +82,19 @@ class BHExpression(metaclass=ABCMeta):
 
     def __or__(self, other: BHOperand) -> "BHExpression":
         return self._compare_to(BHOperators.OR, other)
+
+    def __str__(self) -> str:
+        # BH expressions and codes intermingle in enum classes. While most
+        # filter codes are *also* output codes, some are not (specifically
+        # "ETH").
+        #
+        # To prevent mishaps, explicitly prevent string interpolation.
+        raise NotImplementedError(
+            f"Using {self.__class__.__name__}({self.as_condition_str()}) "
+            "in string interpolation is an error. This expression *CANNOT* "
+            "be used in BH loot filter output text. Use as_condition_str() "
+            "to convert this expression to a string."
+        )
 
 
 class BHLiteralExpression(BHExpression):
