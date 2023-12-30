@@ -13,6 +13,9 @@ class BHOperator:
         self.symbol = symbol
         self.unary = unary
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.name})"
+
 
 class BHOperators:
     ADD = BHOperator("add", "+", False)

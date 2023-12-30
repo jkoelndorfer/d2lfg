@@ -10,7 +10,7 @@ from typing import Optional
 
 from .config import BHConfiguration, BHItemDisplay, BHItemDisplayFilterName
 from .itemdisplay.expression import BHExpression
-from .itemdisplay.output import BHStandardCodes
+from .itemdisplay.code import BHCodes
 
 
 class BHLootFilter:

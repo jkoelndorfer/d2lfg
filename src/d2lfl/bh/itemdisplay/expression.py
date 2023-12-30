@@ -13,6 +13,44 @@ from .operator import BHOperator, BHOperators
 BHOperand = Union[int, "BHExpression"]
 
 
+# ITEMDISPLAY EXPRESSION TESTING NOTES
+#
+# --------------------
+#
+# The rule:
+#    key QTY=1 OR QTY=2
+#
+# - Applied to keys with QTY=1
+# - Applied to keys with QTY=2
+# - Applied to other stackables with QTY=2
+#
+# equivalent rule with parens:
+#    (key QTY=1) OR QTY=2
+#
+# --------------------
+#
+# The rule:
+#    QTY=1 OR key QTY=2
+#
+# - Applied to keys with QTY=2.
+# - *DID NOT* apply to other stackables with QTY=1 or QTY=2.
+#
+# equivalent rule with parens:
+#    (QTY=1 OR key) AND QTY=2
+#
+# --------------------
+#
+# The rule:
+#    QTY=1 OR key QTY=2 OR QTY=3
+#
+# - Applied to keys with QTY=2 or QTY=3
+# - Applied to other stackables with QTY=3
+# - *DID NOT* apply to keys with QTY=1
+# - *DID NOT* apply to other stackables with QTY=1 or QTY=2
+#
+# equivalent rule with parens:
+#    ((QTY=1 OR key) QTY=2) OR QTY=3
+
 class BHExpression(metaclass=ABCMeta):
     """
     A BHExpression is a loot filtering expression.
@@ -50,8 +88,17 @@ class BHExpression(metaclass=ABCMeta):
             f"{self.__class__.__name__} implementers must define requires_parens_for()"
         )
 
+    def and_(self, other: "BHExpression") -> "BHExpression":
+        return self & other
+
+    def eq(self, other: BHOperand) -> "BHExpression":
+        return self == other
+
     def between(self, low: int, high: int) -> "BHExpression":
         return BHCompoundExpression(self, BHOperators.BTWN, BHLiteralExpression(f"{low}-{high}"))
+
+    def or_(self, other: "BHExpression") -> "BHExpression":
+        return self | other
 
     def _compare_to(self, operator: BHOperator, operand: BHOperand) -> "BHExpression":
         """
@@ -95,6 +142,9 @@ class BHExpression(metaclass=ABCMeta):
             "be used in BH loot filter output text. Use as_condition_str() "
             "to convert this expression to a string."
         )
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.as_condition_str()})"
 
 
 class BHLiteralExpression(BHExpression):
@@ -177,7 +227,11 @@ class BHCompoundExpression(BHExpression):
         #
         # This method is based on my evaluation of current loot filters
         # and tries to be conservative.
-        if self.operator is BHOperators.OR and operator is BHOperators.AND:
+        and_or_expr = (
+            (self.operator is BHOperators.OR  and operator is BHOperators.AND) or
+            (self.operator is BHOperators.AND and operator is BHOperators.OR)
+        )
+        if and_or_expr:
             # If this expression is of the form:
             #
             #     a OR b

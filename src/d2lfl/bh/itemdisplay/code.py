@@ -167,4 +167,6 @@ class _BHColorCodes:
 
 
 class BHCodes(_BHStandardCodes, _BHItemCodes, _BHEquipmentCodes, _BHColorCodes):
-    pass
+    """
+    Composite class that contains all BH codes that are not game-specific.
+    """
