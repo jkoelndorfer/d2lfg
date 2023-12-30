@@ -5,8 +5,8 @@ d2lfl.bh.itemdisplay.expression
 This code defines BH maphack loot filter expression classes.
 """
 
-from abc import ABCMeta, abstractmethod
-from typing import Optional, Union
+from abc import ABCMeta, abstractmethod, abstractproperty
+from typing import List, Optional, Union
 
 from .operator import BHOperator, BHOperators
 
@@ -98,28 +98,17 @@ class BHExpression(metaclass=ABCMeta):
             f"{self.__class__.__name__} implementers must define as_condition_str()"
         )
 
-    @abstractmethod
-    def requires_parens_for(self, operator: BHOperator) -> bool:
-        """
-        Determines if this expression requires the protection of parenthesis
-        if operated on using the given `operator`. This method will be called
-        by `BHCompoundExpression` objects.
-        """
-        raise NotImplementedError(
-            f"{self.__class__.__name__} implementers must define requires_parens_for()"
-        )
-
-    def and_(self, other: "BHExpression") -> "BHExpression":
-        return self & other
-
     def eq(self, other: BHOperand) -> "BHExpression":
         return self == other
 
-    def between(self, low: int, high: int) -> "BHExpression":
-        return BHCompoundExpression(self, BHOperators.BTWN, BHLiteralExpression(f"{low}-{high}"))
+    def lt(self, other: BHOperand) -> "BHExpression":
+        return self < other
 
-    def or_(self, other: "BHExpression") -> "BHExpression":
-        return self | other
+    def gt(self, other: BHOperand) -> "BHExpression":
+        return self > other
+
+    def between(self, low: int, high: int) -> "BHExpression":
+        return BHCompoundExpression(BHOperators.BTWN, self, BHLiteralExpression(f"{low}-{high}"))
 
     def _compare_to(self, operator: BHOperator, operand: BHOperand) -> "BHExpression":
         """
@@ -128,7 +117,7 @@ class BHExpression(metaclass=ABCMeta):
         Because operator methods are always called on the left-side operand,
         it is assumed that this object is the left operand in all expressions.
         """
-        return BHCompoundExpression(self, operator, operand)
+        return BHCompoundExpression(operator, self, operand)
 
     def __eq__(self, other: BHOperand) -> "BHExpression":
         return self._compare_to(BHOperators.EQ, other)
@@ -139,17 +128,8 @@ class BHExpression(metaclass=ABCMeta):
     def __gt__(self, other: BHOperand) -> "BHExpression":
         return self._compare_to(BHOperators.GT, other)
 
-    def __invert__(self) -> "BHExpression":
-        return BHCompoundExpression(None, BHOperators.NOT, self)
-
     def __add__(self, other: BHOperand) -> "BHExpression":
         return self._compare_to(BHOperators.ADD, other)
-
-    def __and__(self, other: BHOperand) -> "BHExpression":
-        return self._compare_to(BHOperators.AND, other)
-
-    def __or__(self, other: BHOperand) -> "BHExpression":
-        return self._compare_to(BHOperators.OR, other)
 
     def __str__(self) -> str:
         # BH expressions and codes intermingle in enum classes. While most
@@ -182,14 +162,6 @@ class BHLiteralExpression(BHExpression):
     def as_condition_str(self) -> str:
         return self.value
 
-    def requires_parens_for(self, operator: BHOperator) -> bool:
-        # As this is a literal, this expression should never be
-        # modified by wrapping it in parenthesis.
-        #
-        # If parenthesis are required, include them in the literal
-        # directly.
-        return False
-
 
 class BHCompoundExpression(BHExpression):
     """
@@ -200,101 +172,79 @@ class BHCompoundExpression(BHExpression):
     """
     def __init__(
         self,
-        left_operand: Optional[BHOperand],
         operator: BHOperator,
-        right_operand: BHOperand,
+        *operands: BHOperand,
     ) -> None:
-        if left_operand is None and not operator.unary:
-            raise ValueError("a left operand is required for non-unary operators")
-        elif left_operand is not None and operator.unary:
-            raise ValueError("a left operand cannot be specified for unary operators")
+        if len(operands) > 1 and operator.unary:
+            raise ValueError("operator is unary but more than one operand provided")
 
-        self.left_operand = left_operand
         self.operator = operator
-        self.right_operand = right_operand
+        self.operands = operands
         self._condition_str: Optional[str] = None
 
     def as_condition_str(self) -> str:
         if self._condition_str is not None:
             return self._condition_str
 
-        self._condition_str = f"{self._left_operand_str()}{self.operator.symbol}{self._right_operand_str()}"
+        if self.operator.unary:
+            unary_operand = self.operands[0]
+            self._condition_str = \
+                f"{self.operator.symbol}{self.operand_as_condition_str(unary_operand)}"
+        else:
+            self._condition_str = self.operator.symbol.join(
+                self.operand_as_condition_str(o) for o in self.operands
+            )
         return self._condition_str
 
-    def _left_operand_str(self) -> str:
-        if isinstance(self.left_operand, int):
-            return str(self.left_operand)
 
-        if self.left_operand is None:
-            return ""
+    def operand_as_condition_str(self, operand: BHOperand):
+        if isinstance(operand, int):
+            return str(operand)
 
-        if self.left_operand.requires_parens_for(self.operator):
-            return f"({self.left_operand.as_condition_str()})"
+        if _expr_requires_parens(outer_expr=self, inner_expr=operand):
+            return f"({operand.as_condition_str()})"
         else:
-            return self.left_operand.as_condition_str()
+            return operand.as_condition_str()
 
-    def _right_operand_str(self) -> str:
-        if isinstance(self.right_operand, int):
-            return str(self.right_operand)
 
-        if self.right_operand.requires_parens_for(self.operator):
-            return f"({self.right_operand.as_condition_str()})"
-        else:
-            return self.right_operand.as_condition_str()
+def bh_and(*expressions: BHExpression) -> BHExpression:
+    """
+    Joins BHExpression objects using logical AND.
+    """
+    return BHCompoundExpression(BHOperators.AND, *expressions)
 
-    def requires_parens_for(self, operator: BHOperator) -> bool:
-        # Note: I was not able to find good information about operator
-        # precedence for BH expressions (are there precedence rules?)
-        #
-        # This method is based on my evaluation of current loot filters
-        # and tries to be conservative.
-        and_or_expr = (
-            (self.operator is BHOperators.OR  and operator is BHOperators.AND) or
-            (self.operator is BHOperators.AND and operator is BHOperators.OR)
-        )
-        if and_or_expr:
-            # If this expression is of the form:
-            #
-            #     a OR b
-            #
-            # and we are joined by an AND operator, then we need to
-            # wrap this expression in parenthesis to preserve the
-            # logical meaning of this OR expression.
-            #
-            #     BAD:   c AND a OR B
-            #     GOOD:  c AND (a OR b)
-            return True
-        elif operator is BHOperators.NOT:
-            # If this expression is of the form
-            #
-            #    !a
-            #
-            # Then we skip parenthesis:
-            #
-            #    !!a
-            #
-            # This could expression simplified to just "a" but there
-            # is not a great benefit to doing so and avoiding that can
-            # of worms keeps this library simpler.
-            if self.operator is BHOperators.NOT:
-                return False
+def bh_or(*expressions: BHExpression) -> BHExpression:
+    """
+    Joins BHExpression objects using logical OR.
+    """
+    return BHCompoundExpression(BHOperators.OR, *expressions)
 
-            # If this expression takes one of the forms:
-            #
-            #    a OR  b
-            #    a AND b
-            #    a+b>10
-            #
-            # and we invert it using logical NOT, we need
-            # to wrap the expression in parenthesis.
-            #
-            #     BAD:   !a OR b
-            #     GOOD:  !(a OR b)
-            #
-            #     BAD:   !a AND b
-            #     GOOD:  !(a AND b)
-            #
-            #     BAD:   !a+b>10     <- this may also be syntactically invalid? not sure
-            #     GOOD:  !(a+b>10)
-            return True
+def bh_not(expression: BHExpression) -> BHExpression:
+    """
+    Negates a BHExpression object using logical NOT.
+    """
+    return BHCompoundExpression(BHOperators.NOT, expression)
+
+
+def _expr_requires_parens(outer_expr: "BHCompoundExpression", inner_expr: BHOperand) -> bool:
+    """
+    Returns True if `inner_expr` must be surrounded by parenthesis to maintain
+    its meaning when incorporated into `outer_expr`.
+    """
+    if not isinstance(inner_expr, BHCompoundExpression):
+        # If the inner expression is not a compound expression, parenthesis
+        # are never required.
         return False
+
+    if outer_expr.operator is BHOperators.NOT:
+        # Logical NOT *always* requires parens if the expression
+        # is compound.
+        return True
+
+    paren_req_operators = (BHOperators.AND, BHOperators.OR)
+    if inner_expr.operator not in paren_req_operators:
+        # Inner expressions like less than, greater than, equals,
+        # and between never need to be surrounded by parenthesis.
+        return False
+
+    return True

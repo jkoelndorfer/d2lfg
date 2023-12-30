@@ -36,19 +36,11 @@ class BHFilterCode(BHCode, BHExpression):
     """
     A BH loot filter output code that can also be used in a filter expression.
 
-    For use in a loot filter expression, combine this with other
-    expressions using the standard loot filtering operators
-    (~, >, <, &, |). To get the code for use in a loot filter
-    string (which is not recommended), call as_condition_str().
-
     For use in output strings, simply interpolate this object into
     the string. The required "%" symbols will be included automatically.
     """
     def as_condition_str(self) -> str:
         return self.code
-
-    def requires_parens_for(self, operator: BHOperator) -> bool:
-        return False
 
 
 class BHChargeSkill(BHFilterCode):
