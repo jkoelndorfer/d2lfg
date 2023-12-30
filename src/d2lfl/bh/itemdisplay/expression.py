@@ -153,8 +153,8 @@ class BHLiteralExpression(BHExpression):
     A BHLiteralExpression allows for supporting arbitary text in
     BH loot filter expressions.
 
-    Use of this class is discouraged. Prefer using d2lfl's built-in
-    codes and operators instead.
+    Use of this class is in loot filters discouraged. Prefer using
+    d2lfl's built-in codes and operators instead.
     """
     def __init__(self, value: str) -> None:
         self.value = value

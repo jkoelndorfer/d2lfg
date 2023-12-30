@@ -15,7 +15,19 @@ loot filter operates.
 """
 
 from .bh.lootfilter import BHLootFilter
+from .bh.itemdisplay.expression import (
+    BHLiteralExpression,
+    bh_and,
+    bh_or,
+    bh_not,
+)
+from .bh.itemdisplay.code import BHCodes
 
 __all__ = [
+    "BHCodes",
+    "BHLiteralExpression",
     "BHLootFilter",
+    "bh_and",
+    "bh_or",
+    "bh_not",
 ]

@@ -5,10 +5,13 @@ d2lfl.game.projectd2.base
 Contains base definitions for Project Diablo 2.
 """
 
-class Skill:
-    def __init__(self, name: str, num: int) -> None:
+from ...bh.itemdisplay.expression import BHLiteralExpression
+
+
+class ProjectDiablo2Item(BHLiteralExpression):
+    def __init__(self, code: str, name: str, num: int) -> None:
+        super().__init__(code)
         self.name = name
-        self.num = num
 
     @property
     def charges(self) -> str:
