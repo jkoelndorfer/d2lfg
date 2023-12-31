@@ -5,22 +5,27 @@ d2lfl.game.base
 This module contains definitions for classes used across games.
 """
 
-from typing import Optional
+from typing import List, Optional
 
 from ..bh.itemdisplay.expression import BHLiteralExpression
 
 
 class Diablo2Item(BHLiteralExpression):
+    """
+    Diablo2Item represents something that can be placed in your inventory.
+    """
     def __init__(
         self,
         code: str,
         name: str,
-        lower_tier_code: Optional[str] = None,
-        higher_tier_code: Optional[str] = None,
+        exceptional_code: Optional[str] = None,
+        elite_code: Optional[str] = None,
         lvl_req: int = 0,
         str_req: int = 0,
         dex_req: int = 0,
         max_sockets: int = 0,
+        set_versions: Optional[List[str]] = None,
+        unique_versions: Optional[List[str]] = None,
     ) -> None:
         super().__init__(code)
         self.name = name
@@ -65,3 +70,15 @@ class Diablo2Item(BHLiteralExpression):
 
         #: The maximum number of sockets the item can have.
         self.max_sockets = max_sockets
+
+        #: The names set-rarity versions of this item.
+        self.set_versions = set_versions or []
+
+        #: The names of unique-rarity versions of this item.
+        self.unique_versions = unique_versions or []
+
+
+class Diablo2Equipment(Diablo2Item):
+    """
+    Diablo2Equipment represents an item that can be put into an equip slot.
+    """
