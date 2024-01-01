@@ -18,6 +18,7 @@ class Diablo2Item(BHLiteralExpression):
         self,
         code: str,
         name: str,
+        normal_code: Optional[str] = None,
         exceptional_code: Optional[str] = None,
         elite_code: Optional[str] = None,
         lvl_req: int = 0,
