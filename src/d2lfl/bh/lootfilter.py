@@ -62,7 +62,7 @@ class BHLootFilter:
         if description is not None:
             sio.write(f"{{{description}}}")
         if not terminate:
-            sio.write(str(BHStandardCodes.CONTINUE))
+            sio.write(str(BHCodes.CONTINUE))
         output = sio.getvalue().format(name=name, description=description)
         self.add_display_rule_raw(condition.as_condition_str(), output)
 
