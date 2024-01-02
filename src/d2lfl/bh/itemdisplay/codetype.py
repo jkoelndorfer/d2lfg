@@ -32,7 +32,7 @@ class BHCode:
         return f"{self.__class__.__name__}: {self.code}"
 
 
-class BHFilterCode(BHCode, BHExpression):
+class BHExprCode(BHCode, BHExpression):
     """
     A BH loot filter output code that can also be used in a filter expression.
 
@@ -43,7 +43,7 @@ class BHFilterCode(BHCode, BHExpression):
         return self.code
 
 
-class BHChargeSkill(BHFilterCode):
+class BHChargeSkill(BHExprCode):
     """
     Class implementing a BH charge skill code.
 
@@ -61,7 +61,7 @@ class BHChargeSkill(BHFilterCode):
         return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
 
 
-class BHOSkill(BHFilterCode):
+class BHOSkill(BHExprCode):
     """
     Class implementing a BH oskill code.
 
@@ -79,7 +79,7 @@ class BHOSkill(BHFilterCode):
         return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
 
 
-class BHRegularSkill(BHFilterCode):
+class BHRegularSkill(BHExprCode):
     """
     Class implementing a BH regular +skill code.
 

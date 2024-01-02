@@ -9,7 +9,7 @@ loot filter configuration.
 from .itemdisplay.expression import BHLiteralExpression
 from .itemdisplay.codetype import (
     BHCode,
-    BHFilterCode,
+    BHExprCode,
     BHSkill,
     BHRegularSkill,
     BHOSkill,
@@ -21,8 +21,8 @@ from .itemdisplay.codetype import (
 
 __all__ = [
     "BHCode",
-    "BHFilterCode",
-    "BHFilterCode",
+    "BHExprCode",
+    "BHExprCode",
     "BHLiteralExpression",
     "BHSkill",
     "BHRegularSkill",

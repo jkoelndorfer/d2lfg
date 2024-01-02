@@ -7,7 +7,7 @@ which are *core to Diablo II* and whose meaning will
 not vary between different mods.
 """
 
-from .codetype import BHCode, BHFilterCode
+from .codetype import BHCode, BHExprCode
 from .expression import BHLiteralExpression as BHExpr
 
 
@@ -68,12 +68,12 @@ class _BHMutableCodes:
 
     #: The character's current level.
     #: Possible values: integers 1 - 99, inclusive.
-    CLVL = CHARACTER_LEVEL = BHFilterCode("CLVL")
+    CLVL = CHARACTER_LEVEL = BHExprCode("CLVL")
 
     #: The current difficulty.
     #: Possible values: 0 - 2, inclusive.
     #: 0 = Normal, 1 = Nightmare, 2 = Hell.
-    DIFF = DIFFICULTY = BHFilterCode("DIFF")
+    DIFF = DIFFICULTY = BHExprCode("DIFF")
 
 
 class _BHItemCodes:
@@ -91,21 +91,21 @@ class _BHItemCodes:
 
     #: The level requirement of the item.
     #: Possible values: integers 0 - 99, inclusive.
-    LVLREQ = LEVEL_REQUIREMENT = BHFilterCode("LVLREQ")
+    LVLREQ = LEVEL_REQUIREMENT = BHExprCode("LVLREQ")
 
     #: The number of items in the stack.
     #: Possible values: integers 1 - 350, inclusive.
-    QTY = QUANTITY = BHFilterCode("QTY")
+    QTY = QUANTITY = BHExprCode("QTY")
 
     #: The vendor price of the item.
     #: Possible values: integers 1 - 35000, inclusive.
-    PRICE = VENDOR_PRICE = BHFilterCode("PRICE")
+    PRICE = VENDOR_PRICE = BHExprCode("PRICE")
 
     #: Amount of gold in a gold pile.
     #: Per https://wiki.projectdiablo2.com/wiki/Item_Filtering#Info_Codes,
     #: gold's "item name" may not be modified.
     #: Possible values: positive integers.
-    GOLD = BHFilterCode("GOLD")
+    GOLD = BHExprCode("GOLD")
 
     #: Items of non-magic quality.
     NMAG = NON_MAGIC = BHExpr("NMAG")
@@ -138,29 +138,29 @@ class _BHEquipmentCodes:
 
     #: The item's item level ("ilvl").
     #: Possible values: integers 1 - 99, inclusive.
-    ILVL = ITEM_LEVEL = BHFilterCode("ILVL")
+    ILVL = ITEM_LEVEL = BHExprCode("ILVL")
 
     #: The item's affix level ("alvl"). This determines
     #: what affixes a piece of gear can have.
     #: Possible values: integers 1 - 99, inclusive.
-    ALVL = AFFIX_LEVEL = BHFilterCode("ALVL")
+    ALVL = AFFIX_LEVEL = BHExprCode("ALVL")
 
     #: The item's quality level.
     #: TODO: Possible values
-    QLVL = QUALITY_LEVEL = BHFilterCode("QLVL")
+    QLVL = QUALITY_LEVEL = BHExprCode("QLVL")
 
     #: If the item is used in crafting, this will be the
     #: affix level of the crafting result.
     #: Possible values: integers 1 - 99, inclusive.
-    CRAFTALVL = CRAFTING_AFFIX_LEVEL = BHFilterCode("CRAFTALVL")
+    CRAFTALVL = CRAFTING_AFFIX_LEVEL = BHExprCode("CRAFTALVL")
 
     #: Melee weapon range.
     #: Possible values: integers 0 - 5, inclusive.
-    RANGE = BHFilterCode("RANGE")
+    RANGE = BHExprCode("RANGE")
 
     #: The if the item is a weapon, the speed modifier.
     #: Possible values: integers -60 - 20, inclusive.
-    WPNSPD = WEAPON_SPEED = BHFilterCode("WPNSPD")
+    WPNSPD = WEAPON_SPEED = BHExprCode("WPNSPD")
 
     #: Item is of the "normal" tier. This is the lowest tier.
     NORM = NORMAL = BHExpr("NORM")
