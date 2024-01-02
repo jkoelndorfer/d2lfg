@@ -89,13 +89,13 @@ class BHExpression(metaclass=ABCMeta):
     #    of this library, reserving __str__ for use in string templating
     #    outputs makes good sense.
     @abstractmethod
-    def as_condition_str(self) -> str:
+    def bhexpr(self) -> str:
         """
         Converts this BHExpression into a string suitable for use as an
         ItemDisplay condition.
         """
         raise NotImplementedError(
-            f"{self.__class__.__name__} implementers must define as_condition_str()"
+            f"{self.__class__.__name__} implementers must define bhexpr()"
         )
 
     def eq(self, other: BHOperand) -> "BHExpression":
@@ -138,14 +138,14 @@ class BHExpression(metaclass=ABCMeta):
         #
         # To prevent mishaps, explicitly prevent string interpolation.
         raise NotImplementedError(
-            f"Using {self.__class__.__name__}({self.as_condition_str()}) "
+            f"Using {self.__class__.__name__}({self.bhexpr()}) "
             "in string interpolation is an error. This expression *CANNOT* "
-            "be used in BH loot filter output text. Use as_condition_str() "
+            "be used in BH loot filter output text. Use bhexpr() "
             "to convert this expression to a string."
         )
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.as_condition_str()})"
+        return f"{self.__class__.__name__}({self.bhexpr()})"
 
 
 class BHLiteralExpression(BHExpression):
@@ -159,7 +159,7 @@ class BHLiteralExpression(BHExpression):
     def __init__(self, value: str) -> None:
         self.value = value
 
-    def as_condition_str(self) -> str:
+    def bhexpr(self) -> str:
         return self.value
 
 
@@ -182,29 +182,29 @@ class BHCompoundExpression(BHExpression):
         self.operands = operands
         self._condition_str: Optional[str] = None
 
-    def as_condition_str(self) -> str:
+    def bhexpr(self) -> str:
         if self._condition_str is not None:
             return self._condition_str
 
         if self.operator.unary:
             unary_operand = self.operands[0]
             self._condition_str = \
-                f"{self.operator.symbol}{self.operand_as_condition_str(unary_operand)}"
+                f"{self.operator.symbol}{self.operand_bhexpr(unary_operand)}"
         else:
             self._condition_str = self.operator.symbol.join(
-                self.operand_as_condition_str(o) for o in self.operands
+                self.operand_bhexpr(o) for o in self.operands
             )
         return self._condition_str
 
 
-    def operand_as_condition_str(self, operand: BHOperand):
+    def operand_bhexpr(self, operand: BHOperand):
         if isinstance(operand, int):
             return str(operand)
 
         if _expr_requires_parens(outer_expr=self, inner_expr=operand):
-            return f"({operand.as_condition_str()})"
+            return f"({operand.bhexpr()})"
         else:
-            return operand.as_condition_str()
+            return operand.bhexpr()
 
 
 def bh_and(*expressions: BHExpression) -> BHExpression:

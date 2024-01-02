@@ -39,7 +39,7 @@ class BHFilterCode(BHCode, BHExpression):
     For use in output strings, simply interpolate this object into
     the string. The required "%" symbols will be included automatically.
     """
-    def as_condition_str(self) -> str:
+    def bhexpr(self) -> str:
         return self.code
 
 

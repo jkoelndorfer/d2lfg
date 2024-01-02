@@ -64,7 +64,7 @@ class BHLootFilter:
         if not terminate:
             sio.write(str(BHCodes.CONTINUE))
         output = sio.getvalue().format(name=name, description=description)
-        self.add_display_rule_raw(condition.as_condition_str(), output)
+        self.add_display_rule_raw(condition.bhexpr(), output)
 
     def hide(self, condition: BHExpression) -> None:
         """
@@ -72,7 +72,7 @@ class BHLootFilter:
 
         :param condition: the item matching condition
         """
-        return self.add_display_rule_raw(condition=condition.as_condition_str(), output="")
+        return self.add_display_rule_raw(condition=condition.bhexpr(), output="")
 
     def render(self) -> bytes:
         """
