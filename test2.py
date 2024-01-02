@@ -17,6 +17,4 @@ db = Diablo2TxtDatabase(
     txt("Weapons.txt"),
 )
 
-for a in db.armors(where=lambda a: a.is_normal):
-    upgrade = db.armor(a.uber_code)
-    print(f"{a.name} -> {upgrade.name} (lvl/str req: {upgrade.lvl_req}/{upgrade.str_req})")
+print(db.item("amu"))

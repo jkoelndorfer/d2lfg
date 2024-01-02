@@ -343,5 +343,5 @@ class BHCodes(
     _BHColorCodes,
 ):
     """
-    Composite class that contains all BH codes that are not game-specific.
+    Composite class that contains all BH codes that are not mod-specific.
     """

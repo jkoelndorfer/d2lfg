@@ -8,7 +8,7 @@ Contains code to implement a Diablo2Database backed by
 
 from pathlib import Path
 from types import MappingProxyType
-from typing import Callable, Dict, Iterator, Mapping, Optional, Sequence, Union
+from typing import Dict, Iterable, Iterator, Mapping, Optional, Sequence, Union
 
 from ..game.item import Diablo2Armor, Diablo2BodyLoc, Diablo2Item, Diablo2ItemType, Diablo2Weapon
 from ..game.skill import Diablo2Skill
@@ -131,14 +131,17 @@ class Diablo2TxtDatabase(Diablo2Database):
 
         self.initialize_db()
 
-    def armors(self, where: Callable[[Diablo2Armor], bool] = lambda x: True) -> Iterator[Diablo2Armor]:
-        return filter(where, self._armors_by_code.values())
-
     def armor(self, code: str) -> Diablo2Armor:
         return self._armors_by_code[code]
 
+    def all_armors(self) -> Iterable[Diablo2Armor]:
+        return self._armors_by_code.values()
+
     def item(self, code: str) -> Diablo2Item:
         return self._items_by_code[code]
+
+    def all_items(self) -> Iterable[Diablo2Item]:
+        return self._items_by_code.values()
 
     def item_type(self, code: str) -> Diablo2ItemType:
         return self._item_types_by_code[code]
@@ -151,8 +154,14 @@ class Diablo2TxtDatabase(Diablo2Database):
     def skill(self, id: int) -> Diablo2Skill:
         return self._skills_by_id[id]
 
+    def all_skills(self) -> Iterable[Diablo2Skill]:
+        return self._skills_by_id.values()
+
     def weapon(self, code: str) -> Diablo2Weapon:
         return self._weapons_by_code[code]
+
+    def all_weapons(self) -> Iterable[Diablo2Weapon]:
+        return self._weapons_by_code.values()
 
     def initialize_db(self) -> None:
         self.initialize_item_types()

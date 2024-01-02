@@ -5,8 +5,8 @@ d2lfl.bh.itemdisplay.expression
 This code defines BH maphack loot filter expression classes.
 """
 
-from abc import ABCMeta, abstractmethod, abstractproperty
-from typing import List, Optional, Union
+from abc import ABCMeta, abstractmethod
+from typing import Optional, Union
 
 from .operator import BHOperator, BHOperators
 
