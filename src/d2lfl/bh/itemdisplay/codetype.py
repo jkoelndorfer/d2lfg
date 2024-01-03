@@ -6,7 +6,7 @@ This module contains the type definitions for loot filter codes.
 """
 
 from .expression import BHExpression
-from .operator import BHOperator
+from ...diablo2.game import Diablo2Skill
 
 
 class BHCode:
@@ -21,7 +21,7 @@ class BHCode:
         """
         The code's value, as a string.
 
-        For output codes, this *MUST NOT* include wrapping "%" symbols.
+        This *MUST NOT* include wrapping "%" symbols.
         """
         return self._code
 
@@ -96,7 +96,7 @@ class BHRegularSkill(BHExprCode):
         return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
 
 
-class BHSkill:
+class BHSkill(Diablo2Skill):
     """
     Wrapper for BHRegularSkill, BHOSkill, and BHChargeSkill.
 

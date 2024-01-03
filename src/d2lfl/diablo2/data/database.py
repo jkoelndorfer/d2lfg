@@ -14,6 +14,7 @@ from ..game.item import (
     Diablo2Armor,
     Diablo2Weapon,
 )
+from ..game.playerclass import Diablo2PlayerClass
 from ..game.skill import Diablo2Skill
 
 
@@ -82,6 +83,12 @@ class Diablo2Database(metaclass=ABCMeta):
         """
         Returns an iterable over all Diablo2Skill objects in this database.
         """
+
+    def skills_for_class(self, d2class: Diablo2PlayerClass) -> Iterable[Diablo2Skill]:
+        """
+        Returns an iterable over Diablo2Skill objects for the given class.
+        """
+        return filter(lambda s: s.charclass == d2class, self.all_skills())
 
     def skills_where(self, cond: Callable[[Diablo2Skill], bool]) -> Iterable[Diablo2Skill]:
         """

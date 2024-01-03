@@ -58,7 +58,7 @@ class BHItemDisplay(BHConfigurationItem):
         self.output = output
 
     def render(self) -> str:
-        return f"ItemDisplay[{self.condition}]: {self.output}]"
+        return f"ItemDisplay[{self.condition}]: {self.output}"
 
 
 class BHItemDisplayFilterName(BHConfigurationItem):
@@ -127,8 +127,19 @@ class BHConfiguration:
             sio.write(r.render())
             sio.write("\n")
 
-        # Chop off the last "\n"
-        sio.seek(-1, os.SEEK_END)
+        # Chop off the last "\n".
+        #
+        # For some reason neither:
+        #
+        # sio.seek(-1, os.SEEK_CUR)
+        #
+        # nor
+        #
+        # sio.seek(-1, os.SEEK_END)
+        #
+        # are valid here. They both raise the same exception:
+        #     OSError: Can't do nonzero cur-relative seeks
+        sio.seek(sio.tell() - 1, os.SEEK_SET)
         sio.truncate()
 
         return sio.getvalue().encode(self.encoding)

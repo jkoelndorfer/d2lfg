@@ -6,7 +6,6 @@ This module defines Diablo 2 player classes.
 """
 
 from dataclasses import dataclass
-from enum import Enum
 
 
 @dataclass
@@ -15,7 +14,7 @@ class Diablo2PlayerClass:
     code: str
 
 
-class Diablo2PlayerClasses(Enum):
+class Diablo2PlayerClasses:
     AMA = AMAZON = Diablo2PlayerClass("Amazon", "ama")
     ASS = ASSASSIN = Diablo2PlayerClass("Assassin", "ass")
     BAR = BARBARIAN = Diablo2PlayerClass("Barbarian", "bar")

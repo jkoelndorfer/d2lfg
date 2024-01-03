@@ -8,6 +8,7 @@ from d2lfl import (
     bh_or as OR,
     bh_not as NOT,
 )
+import sys
 
 f = BHLootFilter("Kryszard's PD2 Loot Filter - d2lfl Demo")
 
@@ -67,7 +68,7 @@ f.add_display_rule(
         NOT(RW),
         any_skill(assassin_skills)
     ),
-    f"{BHCodes.GRAY}] {BHCodes.NAME}{BHCodes.CONTINUE}"
+    f"{BHCodes.GRAY}] {BHCodes.NAME}"
 )
 assassin_reversed = list(reversed(assassin_skills))
 while len(assassin_reversed) > 0:
@@ -77,4 +78,7 @@ while len(assassin_reversed) > 0:
             NMAG,
             NOT(RW),
         ),
+        "not magic runeword",
     )
+
+sys.stdout.buffer.write(f.render())

@@ -11,6 +11,7 @@ from types import MappingProxyType
 from typing import Dict, Iterable, Iterator, Mapping, Optional, Sequence, Union
 
 from ..game.item import Diablo2Armor, Diablo2BodyLoc, Diablo2Item, Diablo2ItemType, Diablo2Weapon
+from ..game.playerclass import Diablo2PlayerClass
 from ..game.skill import Diablo2Skill
 from .database import Diablo2Database
 
@@ -128,6 +129,7 @@ class Diablo2TxtDatabase(Diablo2Database):
         self._armors_by_code: Dict[str, Diablo2Armor] = dict()
         self._weapons_by_code: Dict[str, Diablo2Weapon] = dict()
         self._skills_by_id: Dict[int, Diablo2Skill] = dict()
+        self._skills_by_class: Dict[Diablo2PlayerClass, Diablo2Skill] = dict()
 
         self.initialize_db()
 
@@ -167,8 +169,8 @@ class Diablo2TxtDatabase(Diablo2Database):
         self.initialize_item_types()
         self.initialize_armor()
         self.initialize_misc()
-        # self.initialize_skills()
-        # self.initialize_weapons()
+        self.initialize_skills()
+        self.initialize_weapons()
 
     def initialize_item_types(self) -> None:
         for r in self.item_types_txt:
@@ -214,3 +216,28 @@ class Diablo2TxtDatabase(Diablo2Database):
                 int(r["levelreq"]),
             )
             self._items_by_code[item.code] = item
+
+    def initialize_weapons(self) -> None:
+        for r in self.weapons_txt:
+            weapon = Diablo2Weapon(
+                r["code"],
+                self.item_type(r["type"]),
+                self._item_type_optional(r["type2"]),
+                r["name"],
+                int(r["level"]),
+                int(r["levelreq"]),
+                int(r["gemsockets"]),
+                int(r["durability"]),
+                r["normcode"],
+                r["ubercode"],
+                r["ultracode"],
+                int(r["str_req"]),
+                int(r["dex_req"]),
+            )
+            self._items_by_code[weapon.code] = weapon
+            self._weapons_by_code[weapon.code] = weapon
+
+    def initialize_skills(self) -> None:
+        for r in self.skills_txt:
+            if not r["charclass"]:
+                continue

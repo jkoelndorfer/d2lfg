@@ -1,27 +1,30 @@
 """
-d2lfl.bh.itemdisplay.expression
-===============================
+d2lfl.bh.itemdisplay.expression.expression
+==========================================
 
-This code defines BH maphack loot filter expression classes.
+This module defines basic BH ItemDisplay expressions.
 """
 
 from abc import ABCMeta, abstractmethod
+
 from typing import Optional, Union
 
-from .operator import BHOperator, BHOperators
+from ..operator import BHOperator, BHOperators
+
 
 BHOperand = Union[int, "BHExpression"]
 
 
-# See Project Diablo 2's ItemDisplay code:
-#
-# Initial development of this d2lfl:
+# See Project Diablo 2's ItemDisplay code during
+# initial d2lfl development:
 # https://github.com/Project-Diablo-2/BH/blob/b2f94ed72a9926b62d1c461ef5b10078d12999bb/BH/Modules/Item/ItemDisplay.cpp
 #
-# Current:
+# Current Project Diablo 2 ItemDisplay code:
 # https://github.com/Project-Diablo-2/BH/blob/main/BH/Modules/Item/ItemDisplay.cpp
 #
+#
 # ITEMDISPLAY EXPRESSION TESTING NOTES
+# ====================================
 #
 # Tested with Project Diablo 2 Season 8 on 2023-12-29.
 #
@@ -132,8 +135,8 @@ class BHExpression(metaclass=ABCMeta):
         return self._compare_to(BHOperators.ADD, other)
 
     def __str__(self) -> str:
-        # BH expressions and codes intermingle in enum classes. While most
-        # filter codes are *also* output codes, some are not (specifically
+        # BH expressions and output codes intermingle in enum classes. While
+        # many filter codes are *also* output codes, some are not (specifically
         # "ETH").
         #
         # To prevent mishaps, explicitly prevent string interpolation.
@@ -156,11 +159,11 @@ class BHLiteralExpression(BHExpression):
     Use of this class is in loot filters discouraged. Prefer using
     d2lfl's built-in codes and operators instead.
     """
-    def __init__(self, value: str) -> None:
-        self.value = value
+    def __init__(self, expression: str) -> None:
+        self._expression = expression
 
     def bhexpr(self) -> str:
-        return self.value
+        return self._expression
 
 
 class BHCompoundExpression(BHExpression):
@@ -213,11 +216,13 @@ def bh_and(*expressions: BHExpression) -> BHExpression:
     """
     return BHCompoundExpression(BHOperators.AND, *expressions)
 
+
 def bh_or(*expressions: BHExpression) -> BHExpression:
     """
     Joins BHExpression objects using logical OR.
     """
     return BHCompoundExpression(BHOperators.OR, *expressions)
+
 
 def bh_not(expression: BHExpression) -> BHExpression:
     """

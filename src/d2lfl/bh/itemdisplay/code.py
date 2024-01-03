@@ -7,8 +7,12 @@ which are *core to Diablo II* and whose meaning will
 not vary between different mods.
 """
 
+from ...diablo2.game import Diablo2PlayerClasses as D2Classes
 from .codetype import BHCode, BHExprCode
-from .expression import BHLiteralExpression as BHExpr
+from .expression import (
+    BHDiablo2PlayerClassExpression as BHClass,
+    BHLiteralExpression as BHExpr,
+)
 
 
 class _BHStandardCodes:
@@ -40,25 +44,25 @@ class _BHMutableCodes:
     depend on the state of the game, not just the item.
     """
     #: Current character is an amazon.
-    AMAZON = BHExpr("AMAZON")
+    AMAZON = BHClass.copyclass(D2Classes.AMAZON)
 
     #: Current character is an assassin.
-    ASSASSIN = BHExpr("ASSASSIN")
+    ASSASSIN = BHClass.copyclass(D2Classes.ASSASSIN)
 
     #: Current character is a barbarian.
-    BARBARIAN = BHExpr("BARBARIAN")
+    BARBARIAN = BHClass.copyclass(D2Classes.BARBARIAN)
 
     #: Current character is a druid.
-    DRUID = BHExpr("DRUID")
+    DRUID = BHClass.copyclass(D2Classes.DRUID)
 
     #: Current character is a necromancer.
-    NECROMANCER = BHExpr("NECROMANCER")
+    NECROMANCER = BHClass.copyclass(D2Classes.NECROMANCER)
 
     #: Current character is a paladin.
-    PALADIN = BHExpr("PALADIN")
+    PALADIN = BHClass.copyclass(D2Classes.PALADIN)
 
     #: Current character is a sorceress.
-    SORCERESS = BHExpr("SORCERESS")
+    SORCERESS = BHClass.copyclass(D2Classes.SORCERESS)
 
     #: Item is in a merchant's shop window.
     SHOP = BHExpr("SHOP")
