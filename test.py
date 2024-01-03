@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+from pathlib import Path
+import sys
+
 from d2lfl import (
     BHLiteralExpression,
     BHLootFilter,
@@ -8,8 +11,19 @@ from d2lfl import (
     bh_or as OR,
     bh_not as NOT,
 )
-import sys
+from d2lfl.diablo2.data.txt import Diablo2TxtFile, Diablo2TxtDatabase
 
+diablo2_base = Path("/home/kdorf/diablo2/ProjectD2/data/global/excel")
+def txt(f: str) -> Diablo2TxtFile:
+    return Diablo2TxtFile(diablo2_base / f)
+
+db = Diablo2TxtDatabase(
+    txt("ItemTypes.txt"),
+    txt("Armor.txt"),
+    txt("Misc.txt"),
+    txt("Skills.txt"),
+    txt("Weapons.txt"),
+)
 f = BHLootFilter("Kryszard's PD2 Loot Filter - d2lfl Demo")
 
 filtlvl_hide_trash = f.add_filter_level("Hide Just Trash Items")
@@ -22,41 +36,7 @@ NMAG = BHLiteralExpression("NMAG")
 RW = BHLiteralExpression("RW")
 ASSASSIN = BHLiteralExpression("ASSASSIN")
 
-assassin_skills = tuple(
-    BHLiteralExpression(s) for s in [
-        "SK251",
-        "SK252",
-        "SK253",
-        "SK254",
-        "SK255",
-        "SK256",
-        "SK257",
-        "SK258",
-        "SK259",
-        "SK260",
-        "SK261",
-        "SK262",
-        "SK263",
-        "SK264",
-        "SK265",
-        "SK266",
-        "SK267",
-        "SK268",
-        "SK269",
-        "SK270",
-        "SK271",
-        "SK272",
-        "SK273",
-        "SK274",
-        "SK275",
-        "SK276",
-        "SK277",
-        "SK278",
-        "SK279",
-        "SK280",
-        "SK366",
-    ]
-)
+assassin_skills = list(db.skills_for_class(BHCodes.ASSASSIN))
 
 def any_skill(skills):
     skill_present = (s > 0 for s in skills)

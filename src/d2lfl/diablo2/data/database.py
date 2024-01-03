@@ -84,11 +84,11 @@ class Diablo2Database(metaclass=ABCMeta):
         Returns an iterable over all Diablo2Skill objects in this database.
         """
 
+    @abstractmethod
     def skills_for_class(self, d2class: Diablo2PlayerClass) -> Iterable[Diablo2Skill]:
         """
         Returns an iterable over Diablo2Skill objects for the given class.
         """
-        return filter(lambda s: s.charclass == d2class, self.all_skills())
 
     def skills_where(self, cond: Callable[[Diablo2Skill], bool]) -> Iterable[Diablo2Skill]:
         """

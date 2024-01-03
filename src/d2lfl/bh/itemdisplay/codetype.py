@@ -1,6 +1,6 @@
 """
-d2lfl.bh.itemdisplay.codetypes
-==============================
+d2lfl.bh.itemdisplay.codetype
+=============================
 
 This module contains the type definitions for loot filter codes.
 """
@@ -55,10 +55,10 @@ class BHChargeSkill(BHExprCode):
 
     @property
     def code(self) -> str:
-        return f"CHSK{self.parent.skill_num}"
+        return f"CHSK{self.parent.id}"
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
+        return f"{self.__class__.__name__}({self.parent.id}, {self.parent.name})"
 
 
 class BHOSkill(BHExprCode):
@@ -73,10 +73,10 @@ class BHOSkill(BHExprCode):
 
     @property
     def code(self) -> str:
-        return f"OS{self.parent.skill_num}"
+        return f"OS{self.parent.id}"
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
+        return f"{self.__class__.__name__}({self.parent.id}, {self.parent.name})"
 
 
 class BHRegularSkill(BHExprCode):
@@ -90,10 +90,10 @@ class BHRegularSkill(BHExprCode):
 
     @property
     def code(self) -> str:
-        return f"SK{self.parent.skill_num}"
+        return f"SK{self.parent.id}"
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.parent.skill_num}, {self.parent.skill_name})"
+        return f"{self.__class__.__name__}({self.parent.id}, {self.parent.name})"
 
 
 class BHSkill(Diablo2Skill):
@@ -103,9 +103,8 @@ class BHSkill(Diablo2Skill):
     This class is a "dispatch" by which loot filter authors can
     access regular skill, oskill, and skill charge codes.
     """
-    def __init__(self, skill_num: int, skill_name: str) -> None:
-        self.skill_num = skill_num
-        self.skill_name = skill_name
+    def __init__(self, *args) -> None:
+        super().__init__(*args)
 
         self.sk = BHRegularSkill(self)
         self.os = BHOSkill(self)
@@ -120,7 +119,7 @@ class BHSkill(Diablo2Skill):
         )
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.skill_num}, {self.skill_name})"
+        return f"{self.__class__.__name__}({self.id}, {self.name})"
 
 
 class BHItemStat(BHCode):
