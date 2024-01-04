@@ -14,10 +14,11 @@ even allow filter users to pass parameters to control how the
 loot filter operates.
 """
 
-from .bh.lootfilter import BHLootFilter
-from .bh.itemdisplay.expression import (
+from .bh import BHLootFilter
+from .bh import (
     BHLiteralExpression,
     bh_and,
+    bh_data_factory,
     bh_or,
     bh_not,
 )
@@ -28,6 +29,7 @@ __all__ = [
     "BHLiteralExpression",
     "BHLootFilter",
     "bh_and",
+    "bh_data_factory",
     "bh_or",
     "bh_not",
 ]

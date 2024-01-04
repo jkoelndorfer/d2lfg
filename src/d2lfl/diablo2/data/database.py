@@ -6,48 +6,62 @@ This module contains the definition of a Diablo 2 database.
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Callable, Iterable
+from typing import Callable, Generic, Iterable
 
-from ..game.item import (
-    Diablo2Item,
-    Diablo2ItemType,
-    Diablo2Armor,
-    Diablo2Weapon,
-)
 from ..game.playerclass import Diablo2PlayerClass
-from ..game.skill import Diablo2Skill
+from .datafactory import Diablo2DataFactory
+from .generic import AT, ET, IT, ST, WT
 
 
-class Diablo2Database(metaclass=ABCMeta):
+class Diablo2Database(Generic[AT, ET, IT, ST, WT], metaclass=ABCMeta):
     """
     A Diablo2Database provides a mechanism to access Diablo 2 game data.
     """
+
+    def __init__(self, data_factory: Diablo2DataFactory[AT, ET, IT, ST, WT]) -> None:
+        """
+        Creates a Diablo2Database.
+
+        The provided `data_factory` will be used to create Diablo 2 game objects.
+        """
+        self.data_factory = data_factory
+
     @abstractmethod
-    def armor(self, code: str) -> Diablo2Armor:
+    def initialize(self) -> None:
+        """
+        Initializes the database. Returned game data types will be created using
+        the provided `data_factory`. If no `data_factory` is provided, uses the
+        `DEFAULT_DATA_FACTORY`.
+
+        The database must be initialized before calling methods to get game data.
+        """
+
+    @abstractmethod
+    def armor(self, code: str) -> AT:
         """
         Returns a Diablo2Armor with the given `code`.
         """
 
     @abstractmethod
-    def all_armors(self) -> Iterable[Diablo2Armor]:
+    def all_armors(self) -> Iterable[AT]:
         """
         Returns an iterable over all Diablo2Armor objects in this database.
         """
 
-    def armors_where(self, cond: Callable[[Diablo2Armor], bool]) -> Iterable[Diablo2Armor]:
+    def armors_where(self, cond: Callable[[AT], bool]) -> Iterable[AT]:
         """
         Returns an iterable over Diablo2Armor objects matching the given condition.
         """
         return filter(cond, self.all_armors())
 
     @abstractmethod
-    def item(self, code: str) -> Diablo2Item:
+    def item(self, code: str) -> IT:
         """
         Returns a Diablo2Item with the given `code`.
         """
 
     @abstractmethod
-    def all_items(self) -> Iterable[Diablo2Item]:
+    def all_items(self) -> Iterable[IT]:
         """
         Returns an iterable over all Diablo2Item objects in this database.
 
@@ -56,7 +70,7 @@ class Diablo2Database(metaclass=ABCMeta):
         Horadric Cube.
         """
 
-    def items_where(self, cond: Callable[[Diablo2Item], bool]) -> Iterable[Diablo2Item]:
+    def items_where(self, cond: Callable[[IT], bool]) -> Iterable[IT]:
         """
         Returns an iterable Diablo2Item objects matching the given condition.
 
@@ -73,42 +87,42 @@ class Diablo2Database(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def skill(self, id: int) -> Diablo2Skill:
+    def skill(self, id: int) -> ST:
         """
         Returns a Diablo2Skill with the given `id`.
         """
 
     @abstractmethod
-    def all_skills(self) -> Iterable[Diablo2Skill]:
+    def all_skills(self) -> Iterable[ST]:
         """
         Returns an iterable over all Diablo2Skill objects in this database.
         """
 
     @abstractmethod
-    def skills_for_class(self, d2class: Diablo2PlayerClass) -> Iterable[Diablo2Skill]:
+    def skills_for_class(self, d2class: Diablo2PlayerClass) -> Iterable[ST]:
         """
         Returns an iterable over Diablo2Skill objects for the given class.
         """
 
-    def skills_where(self, cond: Callable[[Diablo2Skill], bool]) -> Iterable[Diablo2Skill]:
+    def skills_where(self, cond: Callable[[ST], bool]) -> Iterable[ST]:
         """
         Returns an iterable over Diablo2Skill objects matching the given condition.
         """
         return filter(cond, self.all_skills())
 
     @abstractmethod
-    def weapon(self, code: str) -> Diablo2Weapon:
+    def weapon(self, code: str) -> WT:
         """
         Returns a Diablo2Weapon with the given `code`.
         """
 
     @abstractmethod
-    def all_weapons(self) -> Iterable[Diablo2Weapon]:
+    def all_weapons(self) -> Iterable[WT]:
         """
         Returns an iterable over all Diablo2Weapon objects in this database.
         """
 
-    def weapons_where(self, cond: Callable[[Diablo2Weapon], bool]) -> Iterable[Diablo2Weapon]:
+    def weapons_where(self, cond: Callable[[WT], bool]) -> Iterable[WT]:
         """
         Returns an iterable over Diablo2Weapon objects matching the given condition.
         """

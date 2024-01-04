@@ -4,9 +4,9 @@ from pathlib import Path
 import sys
 
 from d2lfl import (
-    BHLiteralExpression,
     BHLootFilter,
     BHCodes,
+    bh_data_factory,
     bh_and as AND,
     bh_or as OR,
     bh_not as NOT,
@@ -18,12 +18,14 @@ def txt(f: str) -> Diablo2TxtFile:
     return Diablo2TxtFile(diablo2_base / f)
 
 db = Diablo2TxtDatabase(
+    bh_data_factory,
     txt("ItemTypes.txt"),
     txt("Armor.txt"),
     txt("Misc.txt"),
     txt("Skills.txt"),
     txt("Weapons.txt"),
 )
+db.initialize()
 f = BHLootFilter("Kryszard's PD2 Loot Filter - d2lfl Demo")
 
 filtlvl_hide_trash = f.add_filter_level("Hide Just Trash Items")
@@ -32,20 +34,16 @@ filtlvl_recommended = f.add_filter_level("Item Filter - Recommended")
 filtlvl_strict = f.add_filter_level("Strict Filter")
 filtlvl_max_strict = f.add_filter_level("Max-Strictness Filter")
 
-NMAG = BHLiteralExpression("NMAG")
-RW = BHLiteralExpression("RW")
-ASSASSIN = BHLiteralExpression("ASSASSIN")
-
 assassin_skills = list(db.skills_for_class(BHCodes.ASSASSIN))
 
 def any_skill(skills):
-    skill_present = (s > 0 for s in skills)
+    skill_present = (s.sk > 0 for s in skills)
     return OR(*skill_present)
 
 f.add_display_rule(
     AND(
-        NMAG,
-        NOT(RW),
+        BHCodes.NMAG,
+        NOT(BHCodes.RW),
         any_skill(assassin_skills)
     ),
     f"{BHCodes.GRAY}] {BHCodes.NAME}"
@@ -55,10 +53,12 @@ while len(assassin_reversed) > 0:
     current_skill = assassin_reversed.pop()
     f.add_display_rule(
         AND(
-            NMAG,
-            NOT(RW),
+            BHCodes.NMAG,
+            NOT(BHCodes.RW),
         ),
         "not magic runeword",
     )
+
+f.add_display_rule(db.item("t11"), "a t11 thing")
 
 sys.stdout.buffer.write(f.render())

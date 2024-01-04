@@ -130,16 +130,14 @@ class _BHItemCodes:
     #: These are only created through Horadric Cube recipes.
     CRAFT = CRAFTED = BHExpr("CRAFT")
 
+    #: Item is identified.
+    ID = IDENTIFIED = BHExpr("ID")
+
 
 class _BHEquipmentCodes:
     """
     Class that defines BH output codes for equippable items.
     """
-
-    #: Whether the item is ethereal.
-    #: *ETH CANNOT BE USED IN ITEM TEXT*!
-    ETH = ETHEREAL = BHExpr("ETH")
-
     #: The item's item level ("ilvl").
     #: Possible values: integers 1 - 99, inclusive.
     ILVL = ITEM_LEVEL = BHExprCode("ILVL")
@@ -174,6 +172,21 @@ class _BHEquipmentCodes:
 
     #: Item is of the "elite" tier. This is the highest tier.
     ELT = ELITE = BHExpr("ELT")
+
+    #: Whether the item is ethereal.
+    ETH = ETHEREAL = BHExpr("ETH")
+
+    #: Item is of inferior quality.
+    INF = INFERIOR = BHExpr("INF")
+
+    #: Item is of superior quality.
+    SUP = SUPERIOR = BHExpr("SUP")
+
+    #: Item has a runeword.
+    RW = RUNEWORD = BHExpr("RW")
+
+    #: Item has had a gem, jewel, or rune inserted into sockets.
+    GEMMED = BHExpr("GEMMED")
 
     #: Item is a helm. This includes class-specific helms.
     EQ1 = HELM = BHExpr("HELM")

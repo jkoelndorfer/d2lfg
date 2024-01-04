@@ -1,19 +1,23 @@
 """
-d2lfl.diablo2.game.datafactory
+d2lfl.diablo2.data.datafactory
 ==============================
 
 This module contains code to create game data objects.
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Optional, Type
+from typing import Generic, Optional, Type
 
-from .item import Diablo2Armor, Diablo2Equipment, Diablo2Item, Diablo2ItemType, Diablo2Weapon
-from .playerclass import Diablo2PlayerClass
-from .skill import Diablo2Skill
+from ..game.item import Diablo2Armor, Diablo2Equipment, Diablo2Item, Diablo2ItemType, Diablo2Weapon
+from ..game.playerclass import Diablo2PlayerClass
+from ..game.skill import Diablo2Skill
+from .generic import AT, ET, IT, ST, WT
 
 
-class Diablo2DataFactory(metaclass=ABCMeta):
+class Diablo2DataFactory(Generic[AT, ET, IT, ST, WT], metaclass=ABCMeta):
+    """
+    Diablo2DataFactory provides
+    """
     @abstractmethod
     def item(
         self,
@@ -23,7 +27,7 @@ class Diablo2DataFactory(metaclass=ABCMeta):
         name: str,
         ilvl: int,
         lvl_req: int,
-    ) -> Diablo2Item:
+    ) -> IT:
         """
         Creates a new Diablo2Item.
         """
@@ -42,7 +46,7 @@ class Diablo2DataFactory(metaclass=ABCMeta):
         norm_code: str,
         uber_code: str,
         ultra_code: str,
-    ) -> Diablo2Equipment:
+    ) -> ET:
         """
         Creates a new Diablo2Equipment.
         """
@@ -64,7 +68,7 @@ class Diablo2DataFactory(metaclass=ABCMeta):
         str_req: int,
         min_def: int,
         max_def: int,
-    ) -> Diablo2Armor:
+    ) -> AT:
         """
         Creates a new Diablo2Armor.
         """
@@ -85,26 +89,26 @@ class Diablo2DataFactory(metaclass=ABCMeta):
         ultra_code: str,
         str_req: int,
         dex_req: int,
-    ) -> Diablo2Weapon:
+    ) -> WT:
         """
         Creates a new Diablo2Weapon.
         """
 
     @abstractmethod
-    def skill(self, id: int, name: str, charclass: Diablo2PlayerClass) -> Diablo2Skill:
+    def skill(self, id: int, name: str, charclass: Diablo2PlayerClass) -> ST:
         """
         Creates a new Diablo2Skill.
         """
 
 
-class TypeConfigurableDiablo2DataFactory(Diablo2DataFactory):
+class TypeConfigurableDiablo2DataFactory(Diablo2DataFactory[AT, ET, IT, ST, WT]):
     def __init__(
         self,
-        armor_type: Type[Diablo2Armor],
-        item_type: Type[Diablo2Item],
-        equipment_type: Type[Diablo2Equipment],
-        weapon_type: Type[Diablo2Weapon],
-        skill_type: Type[Diablo2Skill],
+        armor_type: Type[AT] = Diablo2Armor,
+        item_type: Type[IT] = Diablo2Item,
+        equipment_type: Type[ET] = Diablo2Equipment,
+        weapon_type: Type[WT] = Diablo2Weapon,
+        skill_type: Type[ST] = Diablo2Skill,
     ) -> None:
         self.armor_type = armor_type
         self.item_type = item_type
@@ -120,7 +124,7 @@ class TypeConfigurableDiablo2DataFactory(Diablo2DataFactory):
         name: str,
         ilvl: int,
         lvl_req: int,
-    ) -> Diablo2Item:
+    ) -> IT:
         """
         Creates a new Diablo2Item.
         """
@@ -139,7 +143,7 @@ class TypeConfigurableDiablo2DataFactory(Diablo2DataFactory):
         norm_code: str,
         uber_code: str,
         ultra_code: str,
-    ) -> Diablo2Equipment:
+    ) -> ET:
         """
         Creates a new Diablo2Equipment.
         """
@@ -173,7 +177,7 @@ class TypeConfigurableDiablo2DataFactory(Diablo2DataFactory):
         str_req: int,
         min_def: int,
         max_def: int,
-    ) -> Diablo2Armor:
+    ) -> AT:
         """
         Creates a new Diablo2Armor.
         """
@@ -209,7 +213,7 @@ class TypeConfigurableDiablo2DataFactory(Diablo2DataFactory):
         ultra_code: str,
         str_req: int,
         dex_req: int,
-    ) -> Diablo2Weapon:
+    ) -> WT:
         """
         Creates a new Diablo2Weapon.
         """
@@ -229,7 +233,7 @@ class TypeConfigurableDiablo2DataFactory(Diablo2DataFactory):
             dex_req,
         )
 
-    def skill(self, id: int, name: str, charclass: Diablo2PlayerClass) -> Diablo2Skill:
+    def skill(self, id: int, name: str, charclass: Diablo2PlayerClass) -> ST:
         """
         Creates a new Diablo2Skill.
         """
