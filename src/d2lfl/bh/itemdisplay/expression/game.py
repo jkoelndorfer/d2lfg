@@ -19,6 +19,8 @@ class BHDiablo2ItemExpressionMixin(BHExpression):
     """
     Mix-in class for objects which are both a BHExpression and a Diablo2Item.
     """
+    code: str  # only used for type checking; should be provided by superclass
+
     def bhexpr(self) -> str:
         return self.code
 

@@ -6,9 +6,10 @@ This module contains BH lootfilter APIs intended for user consumption.
 """
 
 from io import StringIO
+from textwrap import dedent as text_dedent
 from typing import Optional
 
-from .config import BHConfiguration, BHItemDisplay, BHItemDisplayFilterName
+from .config import BHConfiguration, BHBlankLines, BHComment, BHItemDisplay, BHItemDisplayFilterName
 from .itemdisplay.expression import BHExpression
 from .itemdisplay.code import BHCodes
 
@@ -23,18 +24,16 @@ class BHLootFilter:
         self._filter_level_num = 0
         self._bh_config = BHConfiguration()
 
-    def add_filter_level(self, name: str) -> int:
-        """
-        Adds a new filter level with the given `name`. Returns
-        the integer value of the filter that is used in
-        `FILTLVL` conditions.
+    def add_blank_lines(self, count: int) -> None:
+        self._bh_config.add(BHBlankLines(count))
 
-        :param name: the name of the filter level
+    def add_comment(self, comment: str, dedent: bool = False) -> None:
         """
-        level_num = self._filter_level_num
-        self._bh_config.add(BHItemDisplayFilterName(name))
-        self._filter_level_num += 1
-        return level_num
+        Adds the given comment string to the BH loot filter.
+        """
+        if dedent:
+            comment = text_dedent(comment)
+        self._bh_config.add(BHComment(comment))
 
     def add_display_rule_raw(self, condition: str, output: str) -> None:
         """
@@ -65,6 +64,19 @@ class BHLootFilter:
             sio.write(str(BHCodes.CONTINUE))
         output = sio.getvalue().format(name=name, description=description)
         self.add_display_rule_raw(condition.bhexpr(), output)
+
+    def add_filter_level(self, name: str) -> int:
+        """
+        Adds a new filter level with the given `name`. Returns
+        the integer value of the filter that is used in
+        `FILTLVL` conditions.
+
+        :param name: the name of the filter level
+        """
+        level_num = self._filter_level_num
+        self._bh_config.add(BHItemDisplayFilterName(name))
+        self._filter_level_num += 1
+        return level_num
 
     def hide(self, condition: BHExpression) -> None:
         """

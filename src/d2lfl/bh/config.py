@@ -36,15 +36,44 @@ it should be easy to add support for other configuration types here.
 from abc import ABCMeta, abstractmethod
 from io import StringIO
 import os
+import re
 from typing import List, Literal
 
 
 class BHConfigurationItem(metaclass=ABCMeta):
+    def trailing_newline(self) -> bool:
+        """
+        If True, the configuration item should
+        """
+        return True
+
     @abstractmethod
     def render(self) -> str:
         """
         Renders the given BH configuration element.
         """
+
+
+class BHBlankLines(BHConfigurationItem):
+    def __init__(self, count: int) -> None:
+        self.count = count
+
+    def render(self) -> str:
+        return "\n" * self.count
+
+    def trailing_newline(self) -> bool:
+        return False
+
+
+class BHComment(BHConfigurationItem):
+    #: Regular expression used to insert comment characters.
+    comment_replace_re = re.compile("^", re.MULTILINE)
+
+    def __init__(self, comment: str) -> None:
+        self.comment = comment
+
+    def render(self) -> str:
+        return self.comment_replace_re.sub("// ", self.comment.strip("\n"))
 
 
 class BHItemDisplay(BHConfigurationItem):
@@ -125,7 +154,8 @@ class BHConfiguration:
         sio = StringIO()
         for r in self._config_items:
             sio.write(r.render())
-            sio.write("\n")
+            if r.trailing_newline():
+                sio.write("\n")
 
         # Chop off the last "\n".
         #

@@ -28,6 +28,17 @@ db = Diablo2TxtDatabase(
 db.initialize()
 f = BHLootFilter("Kryszard's PD2 Loot Filter - d2lfl Demo")
 
+f.add_comment(
+    """
+    pd2lfl demo loot filter
+    =======================
+
+    Generate Diablo 2 BH loot filter rules using Python!
+    """,
+    dedent=True
+)
+f.add_blank_lines(1)
+
 filtlvl_hide_trash = f.add_filter_level("Hide Just Trash Items")
 filtlvl_more_notify = f.add_filter_level("Item Filter - More Notify")
 filtlvl_recommended = f.add_filter_level("Item Filter - Recommended")
@@ -59,6 +70,8 @@ while len(assassin_reversed) > 0:
         "not magic runeword",
     )
 
-f.add_display_rule(db.item("t11"), "a t11 thing")
+t11_item = db.item("t11")
+f.add_display_rule(t11_item, f"a {t11_item.name} thing")
+# f.add_comment("my comment\nand another line")
 
 sys.stdout.buffer.write(f.render())

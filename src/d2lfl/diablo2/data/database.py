@@ -8,6 +8,7 @@ This module contains the definition of a Diablo 2 database.
 from abc import ABCMeta, abstractmethod
 from typing import Callable, Generic, Iterable
 
+from ..game.item import Diablo2ItemType
 from ..game.playerclass import Diablo2PlayerClass
 from .datafactory import Diablo2DataFactory
 from .generic import AT, ET, IT, ST, WT
