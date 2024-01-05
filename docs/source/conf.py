@@ -1,3 +1,5 @@
+from d2lfg import __version__
+
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
@@ -9,8 +11,6 @@
 project = 'd2lfg'
 copyright = '2024, John Koelndorfer'
 author = 'John Koelndorfer'
-
-from d2lfg import __version__
 release = __version__
 
 # -- General configuration ---------------------------------------------------
