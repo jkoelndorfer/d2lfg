@@ -7,15 +7,16 @@ Contains code to implement a Diablo2Database backed by
 """
 
 from pathlib import Path
+import re
 from types import MappingProxyType
 from typing import Dict, Iterable, Iterator, List, Mapping, Optional, Sequence, Union
 
-from ..game.item import Diablo2Armor, Diablo2BodyLoc, Diablo2Item, Diablo2ItemType, Diablo2Weapon
+from ..game.item import Diablo2BodyLoc, Diablo2ItemType
 from ..game.playerclass import Diablo2PlayerClass, Diablo2PlayerClasses
-from ..game.skill import Diablo2Skill
 from .database import Diablo2Database
 from .datafactory import Diablo2DataFactory
-from .generic import AT, ET, IT, ST, WT
+from .generic import AnyItem, AT, ET, IT, ST, WT
+from .normalize import Diablo2LookupNormalizer
 
 
 class Diablo2TxtRecord:
@@ -108,6 +109,7 @@ class Diablo2TxtDatabase(Diablo2Database[AT, ET, IT, ST, WT]):
         misc_txt: Diablo2TxtFile,
         skills_txt: Diablo2TxtFile,
         weapons_txt: Diablo2TxtFile,
+        skill_normalizer: Diablo2LookupNormalizer,
     ) -> None:
         """
         Creates a new Diablo2TxtDatabase.
@@ -120,21 +122,24 @@ class Diablo2TxtDatabase(Diablo2Database[AT, ET, IT, ST, WT]):
         :param misc_txt: the data/global/excel/Misc.txt data file
         :param skills_txt: the data/global/excel/Skills.txt data file
         :param weapons_txt: the data/global/excel/Weapons.txt data file
+        :param skill_normalizer: a lookup normalizer with desired skill aliases
         """
-        super().__init__(data_factory)
+        self.data_factory = data_factory
 
         self.armor_txt = armor_txt
         self.item_types_txt = item_types_txt
         self.misc_txt = misc_txt
         self.skills_txt = skills_txt
         self.weapons_txt = weapons_txt
+        self.skill_normalizer = skill_normalizer
 
     def initialize(self) -> None:
         self._item_types_by_code: Dict[str, Diablo2ItemType] = dict()
-        self._items_by_code: Dict[str, IT] = dict()
+        self._items_by_code: Dict[str, IT | ET | AT | WT] = dict()
         self._armors_by_code: Dict[str, AT] = dict()
         self._weapons_by_code: Dict[str, WT] = dict()
         self._skills_by_id: Dict[int, ST] = dict()
+        self._skills_by_normal_name: Dict[str, ST] = dict()
         self._skills_by_class: Dict[str, List[ST]] = dict()
 
         self.initialize_item_types()
@@ -150,10 +155,10 @@ class Diablo2TxtDatabase(Diablo2Database[AT, ET, IT, ST, WT]):
     def all_armors(self) -> Iterable[AT]:
         return self._armors_by_code.values()
 
-    def item(self, code: str) -> IT:
+    def item(self, code: str) -> AnyItem:
         return self._items_by_code[code]
 
-    def all_items(self) -> Iterable[IT]:
+    def all_items(self) -> Iterable[AnyItem]:
         return self._items_by_code.values()
 
     def item_type(self, code: str) -> Diablo2ItemType:

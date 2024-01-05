@@ -6,12 +6,12 @@ This module contains the definition of a Diablo 2 database.
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Callable, Generic, Iterable
+from typing import Callable, Generic, Iterable, Union
 
 from ..game.item import Diablo2ItemType
 from ..game.playerclass import Diablo2PlayerClass
 from .datafactory import Diablo2DataFactory
-from .generic import AT, ET, IT, ST, WT
+from .generic import AnyItem, AT, ET, IT, ST, WT
 
 
 class Diablo2Database(Generic[AT, ET, IT, ST, WT], metaclass=ABCMeta):
@@ -19,20 +19,10 @@ class Diablo2Database(Generic[AT, ET, IT, ST, WT], metaclass=ABCMeta):
     A Diablo2Database provides a mechanism to access Diablo 2 game data.
     """
 
-    def __init__(self, data_factory: Diablo2DataFactory[AT, ET, IT, ST, WT]) -> None:
-        """
-        Creates a Diablo2Database.
-
-        The provided `data_factory` will be used to create Diablo 2 game objects.
-        """
-        self.data_factory = data_factory
-
     @abstractmethod
     def initialize(self) -> None:
         """
-        Initializes the database. Returned game data types will be created using
-        the provided `data_factory`. If no `data_factory` is provided, uses the
-        `DEFAULT_DATA_FACTORY`.
+        Initializes the database.
 
         The database must be initialized before calling methods to get game data.
         """
@@ -56,13 +46,13 @@ class Diablo2Database(Generic[AT, ET, IT, ST, WT], metaclass=ABCMeta):
         return filter(cond, self.all_armors())
 
     @abstractmethod
-    def item(self, code: str) -> IT:
+    def item(self, code: str) -> AnyItem:
         """
         Returns a Diablo2Item with the given `code`.
         """
 
     @abstractmethod
-    def all_items(self) -> Iterable[IT]:
+    def all_items(self) -> Iterable[AnyItem]:
         """
         Returns an iterable over all Diablo2Item objects in this database.
 
@@ -71,7 +61,7 @@ class Diablo2Database(Generic[AT, ET, IT, ST, WT], metaclass=ABCMeta):
         Horadric Cube.
         """
 
-    def items_where(self, cond: Callable[[IT], bool]) -> Iterable[IT]:
+    def items_where(self, cond: Callable[[AnyItem], bool]) -> Iterable[AnyItem]:
         """
         Returns an iterable Diablo2Item objects matching the given condition.
 
