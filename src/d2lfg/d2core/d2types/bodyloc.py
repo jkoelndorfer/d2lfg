@@ -27,7 +27,7 @@ class Diablo2BodyLocs:
     """
     Collection of all valid :py:class:`Diablo2BodyLoc` objects.
 
-    Body locations are defined in `BodyLocs.txt`.
+    Body locations are defined in ``BodyLocs.txt``.
     """
 
     #: The head body location. Helms are equipped here.
