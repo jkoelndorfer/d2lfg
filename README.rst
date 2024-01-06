@@ -1,10 +1,11 @@
-.. readme-include-start
-Diablo 2 Loot Filter Generator (d2lfg)
-======================================
+==========================================
+Diablo 2 Loot Filter Generator (``d2lfg``)
+==========================================
 
-Diablo 2 Loot Filter Generator (d2lfg) is a small Python library
+Diablo 2 Loot Filter Generator (``d2lfg``) is a small Python library
 to aid in maintenance of Diablo 2 loot filter configurations.
 
+.. readme-include-start
 d2lfg was built targeting `Project Diablo 2`_ and `BH`_ loot filter
 configurations. Other mods using BH will probably work out of the
 box. Support for other loot filters, like `D2Stats`_, should be

@@ -1,8 +1,8 @@
 """
-tests/test_testenv.py
-=====================
+``tests.test_testenv``
+======================
 
-This file contains tests that help verify the testing environment.
+This module contains tests that help verify the testing environment.
 
 If any tests here fail, there is probably something wrong with
 the environment we are testing in.
