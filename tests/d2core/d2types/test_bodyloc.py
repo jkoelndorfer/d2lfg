@@ -1,6 +1,6 @@
 """
-tests.d2core.d2types.test_bodyloc
-=================================
+``tests.d2core.d2types.test_bodyloc``
+=====================================
 
 Tests code in :py:mod:`d2lfg.d2core.d2types.bodyloc`.
 """
