@@ -1,4 +1,18 @@
+from pathlib import Path
+import sys
+
 from d2lfg import __version__
+
+sphinx_conf_dir = Path(__file__).cwd()
+repo_root = (sphinx_conf_dir / ".." / "..").resolve()
+src_dir = repo_root / "src"
+
+# Allow sphinx to discover the "tests" module.
+sys.path.insert(0, str(repo_root))
+
+# Allow sphinx to discover d2lfg.
+sys.path.insert(0, str(src_dir))
+
 
 # Configuration file for the Sphinx documentation builder.
 #
