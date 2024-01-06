@@ -7,9 +7,11 @@ to aid in maintenance of Diablo 2 loot filter configurations.
 """
 
 from .__version__ import __version__
+from . import d2core
 from . import error
 
 __all__ = [
+    "d2core",
     "error",
     "__version__",
 ]
