@@ -6,8 +6,9 @@ This module contains the model for a Diablo 2 body location.
 """
 
 from dataclasses import dataclass
+from typing import Type
 
-from ...error import DataLookupError
+from ...util import Diablo2Collection
 
 
 @dataclass
@@ -18,16 +19,19 @@ class Diablo2BodyLoc:
     :param name: the name of the body location
     :param code: the code used to reference the body location
     """
+
     name: str
     code: str
 
+    def __hash__(self) -> int:
+        return hash(f"{self.name}.{self.code}")
 
 
-class Diablo2BodyLocs:
+class Diablo2BodyLocs(Diablo2Collection[Diablo2BodyLoc]):
     """
     Collection of all valid :py:class:`Diablo2BodyLoc` objects.
 
-    Body locations are defined in `BodyLocs.txt`.
+    Body locations are defined in ``BodyLocs.txt``.
     """
 
     #: The head body location. Helms are equipped here.
@@ -49,7 +53,7 @@ class Diablo2BodyLocs:
     RRIN = RIGHT_RING = Diablo2BodyLoc("Right Ring", "rrin")
 
     #: The left ring location. Rings are equipped here.
-    LRIN = LEFT_RING = Diablo2BodyLoc("Left Ring",  "lrin")
+    LRIN = LEFT_RING = Diablo2BodyLoc("Left Ring", "lrin")
 
     #: The belt location. Belts are equipped here.
     BELT = Diablo2BodyLoc("Belt", "belt")
@@ -61,15 +65,5 @@ class Diablo2BodyLocs:
     GLOV = GLOVES = Diablo2BodyLoc("Gloves", "glov")
 
     @classmethod
-    def lookup(cls, loc: str) -> Diablo2BodyLoc:
-        """
-        Looks up a :py:class:`Diablo2BodyLoc` using its code or one
-        of the aliases defined on :py:class:`Diablo2BodyLocs`.
-
-        :raise: :py:class:`~d2lfg.error.DataLookupError`: the body location
-                does not exist
-        """
-        v = getattr(cls, loc, None)
-        if not isinstance(v, Diablo2BodyLoc):
-            raise DataLookupError(f"no such body location: {loc}")
-        return v
+    def collection_type(cls) -> Type[Diablo2BodyLoc]:
+        return Diablo2BodyLoc
