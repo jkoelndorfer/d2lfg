@@ -30,13 +30,16 @@ class TestDiablo2BodyLocs:
     Tests :py:class:`~d2lfg.d2core.d2types.bodyloc.Diablo2BodyLocs`.
     """
 
-    @pytest.mark.parametrize("loc_str", [
-        "HEAD",
-        "TORS",
-        "TORSO",
-        "LRIN",
-        "RIGHT_ARM",
-    ])
+    @pytest.mark.parametrize(
+        "loc_str",
+        [
+            "HEAD",
+            "TORS",
+            "TORSO",
+            "LRIN",
+            "RIGHT_ARM",
+        ],
+    )
     def test_successful_lookup(self, loc_str: str) -> None:
         """
         Verifies that a valid body location lookup returns a
@@ -48,11 +51,14 @@ class TestDiablo2BodyLocs:
 
         assert isinstance(body_loc, Diablo2BodyLoc)
 
-    @pytest.mark.parametrize("loc_str", [
-        "NOTHEAD",
-        "LIGHT_ARM",
-        "RRING2",
-    ])
+    @pytest.mark.parametrize(
+        "loc_str",
+        [
+            "NOTHEAD",
+            "LIGHT_ARM",
+            "RRING2",
+        ],
+    )
     def test_unsuccessful_lookup(self, loc_str: str) -> None:
         """
         Verifies that an invalid body location lookup raises a
