@@ -33,6 +33,9 @@ This section documents Diablo 2 type models.
 .. automodule:: d2lfg.d2core.d2types.playerclass
    :members:
 
+.. automodule:: d2lfg.d2core.d2types.item
+   :members:
+
 ************
 Utility Code
 ************
