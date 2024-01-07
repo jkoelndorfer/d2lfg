@@ -33,13 +33,13 @@ class Diablo2PlayerClasses(Diablo2Collection[Diablo2PlayerClass]):
     so code edits are required to modify these per the Phrozen
     Keep file guide `[1]`_:
 
-    > Hardcoded reference tables:
-    > These files are lookup tables that link hardcoded data with
-    > the txt files, you need to edit the code to edit these
-    >
-    > [...]
-    >
-    > PlayerClass.txt - lookup table for class codes
+        Hardcoded reference tables:
+        These files are lookup tables that link hardcoded data with
+        the txt files, you need to edit the code to edit these
+
+        [...]
+
+        PlayerClass.txt - lookup table for class codes
 
     .. _[1]: https://www.d2mods.info/forum/viewtopic.php?t=34455
     """
