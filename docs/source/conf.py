@@ -22,9 +22,9 @@ sys.path.insert(0, str(src_dir))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'd2lfg'
-copyright = '2024, John Koelndorfer'
-author = 'John Koelndorfer'
+project = "d2lfg"
+copyright = "2024, John Koelndorfer"
+author = "John Koelndorfer"
 release = __version__
 
 # -- General configuration ---------------------------------------------------
@@ -35,7 +35,7 @@ extensions = [
     "sphinx.ext.intersphinx",
 ]
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = []
 
 intersphinx_mapping = {
@@ -47,5 +47,5 @@ intersphinx_mapping = {
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
-html_static_path = ['_static']
+html_theme = "alabaster"
+html_static_path = ["_static"]
