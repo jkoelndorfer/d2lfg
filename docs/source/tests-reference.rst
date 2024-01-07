@@ -25,3 +25,6 @@ Tests
 
 .. automodule:: tests.d2core.d2types.test_bodyloc
    :members:
+
+.. automodule:: tests.d2core.d2types.test_playerclass
+   :members:
