@@ -42,7 +42,16 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
 }
 
-
+# Disables Sphinx nitpicking (i.e. ability to link to docs) for
+# specific targets.
+#
+# See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-nitpick_ignore_regex
+nitpick_ignore_regex = [
+    # Sphinx does not know how to resolve TypeVars.
+    #
+    # See https://github.com/sphinx-doc/sphinx/issues/10974.
+    (r"py:class", r".*\.T"),
+]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
