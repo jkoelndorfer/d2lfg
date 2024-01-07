@@ -11,6 +11,20 @@ from d2lfg.error import DataLookupError
 from d2lfg.d2core.d2types import Diablo2BodyLoc, Diablo2BodyLocs
 
 
+class TestDiablo2BodyLoc:
+    """
+    Tests :py:class:`~d2lfg.d2core.d2types.bodyloc.Diablo2BodyLoc`.
+    """
+
+    def test_hash(self) -> None:
+        """
+        Verifies that :py:class:`~d2lfg.d2core.d2types.bodyloc.Diablo2BodyLoc` objects
+        are hashable.
+        """
+        for loc in Diablo2BodyLocs.all():
+            assert isinstance(hash(loc), int)
+
+
 class TestDiablo2BodyLocs:
     """
     Tests :py:class:`~d2lfg.d2core.d2types.bodyloc.Diablo2BodyLocs`.
