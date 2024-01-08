@@ -10,7 +10,7 @@ from d2lfg.d2core.d2types.item import Diablo2Item, Diablo2ItemTier
 
 class TestDiablo2Item:
     """
-    Tests :py:class:`~d2lfg.d2core.d2types.Diablo2Item`.
+    Tests :py:class:`~d2lfg.d2core.d2types.item.Diablo2Item`.
     """
 
     def test_axe_is_equippable(self, axe_item: Diablo2Item) -> None:

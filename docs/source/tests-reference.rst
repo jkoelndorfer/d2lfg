@@ -29,4 +29,8 @@ Tests
 .. automodule:: tests.d2core.d2types.test_playerclass
    :members:
 
-.. automodule:: tests.d2core.d2types.test_item
+.. automodule:: tests.d2core.d2types.test_item.test_itemtype
+   :members:
+
+.. automodule:: tests.d2core.d2types.test_item.test_item
+   :members:

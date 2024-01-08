@@ -10,7 +10,7 @@ from d2lfg.d2core.d2types.item import Diablo2ItemType
 
 class TestDiablo2ItemType:
     """
-    Tests :py:class:`~d2lfg.d2core.d2types.Diablo2ItemType`.
+    Tests :py:class:`~d2lfg.d2core.d2types.item.Diablo2ItemType`.
     """
 
     def test_all_types_yielded_once(self, axe_item_type: Diablo2ItemType) -> None:

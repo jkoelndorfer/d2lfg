@@ -149,10 +149,10 @@ class Diablo2Item:
     Diablo 2 treats ``Armor.txt``, ``Misc.txt``, and ``Weapons.txt`` interchangeably. So
     we model this class after that behavior. From the ``Misc.txt`` guide:
 
-    > Armor.txt ,Misc.txt and Weapons.txt have many identical columns. That's because in
-    > fact these 3 text files are, in truth, three parts of a single big file : when the
-    > game reads these 3 tables, it merges them all, one after another, into one and
-    > unique table.
+        Armor.txt ,Misc.txt and Weapons.txt have many identical columns. That's because
+        in fact these 3 text files are, in truth, three parts of a single big file :
+        when the game reads these 3 tables, it merges them all, one after another, into
+        one and unique table.
 
     See also:
     * `Phrozen Keep Armor.txt Guide <https://d2mods.info/forum/kb/viewarticle?a=2>`_.
