@@ -34,3 +34,6 @@ Tests
 
 .. automodule:: tests.d2core.d2types.item.test_item
    :members:
+
+.. automodule:: tests.d2core.data.test_txt
+   :members:
