@@ -1,6 +1,6 @@
 """
-``tests.d2core.d2types.test_item.test_itemtype``
-================================================
+``tests.d2core.d2types.item.test_itemtype``
+===========================================
 
 Tests :py:class:`d2lfg.d2core.d2types.item.Diablo2ItemType`.
 """
