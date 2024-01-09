@@ -36,6 +36,13 @@ This section documents Diablo 2 type models.
 .. automodule:: d2lfg.d2core.d2types.item
    :members:
 
+------------------------
+Diablo 2 Data Processing
+------------------------
+
+.. automodule:: d2lfg.d2core.data.txt
+   :members:
+
 ************
 Utility Code
 ************
