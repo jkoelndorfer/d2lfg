@@ -50,6 +50,13 @@ BH Maphack
 
 This section documents BH maphack code.
 
+------------------
+Filter Expressions
+------------------
+
+.. automodule:: d2lfg.bh.config.itemdisplay.filterexpr
+   :members:
+
 ************
 Utility Code
 ************
