@@ -43,6 +43,13 @@ Diablo 2 Data Processing
 .. automodule:: d2lfg.d2core.data.txt
    :members:
 
+
+**********
+BH Maphack
+**********
+
+This section documents BH maphack code.
+
 ************
 Utility Code
 ************
