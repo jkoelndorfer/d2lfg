@@ -64,6 +64,13 @@ Output Codes
 .. automodule:: d2lfg.bh.config.itemdisplay.outputcode
    :members:
 
+-------------------
+Filter Output Codes
+-------------------
+
+.. automodule:: d2lfg.bh.config.itemdisplay.filteroutputcode
+   :members:
+
 ************
 Utility Code
 ************
