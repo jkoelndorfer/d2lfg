@@ -57,6 +57,13 @@ Filter Expressions
 .. automodule:: d2lfg.bh.config.itemdisplay.filterexpr
    :members:
 
+------------
+Output Codes
+------------
+
+.. automodule:: d2lfg.bh.config.itemdisplay.outputcode
+   :members:
+
 ************
 Utility Code
 ************
