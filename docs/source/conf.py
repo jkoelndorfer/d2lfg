@@ -42,6 +42,10 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
 }
 
+# Prevent Sphinx from including the entire module name in
+# class autodocs.
+add_module_names = False
+
 # Disables Sphinx nitpicking (i.e. ability to link to docs) for
 # specific targets.
 #
