@@ -6,9 +6,12 @@ This module contains the model for a Diablo 2 player class.
 """
 
 from dataclasses import dataclass
-from typing import Type
+from typing import Type, TypeVar
 
 from ...util import Diablo2Collection
+
+
+D2Class = TypeVar("D2Class", bound="Diablo2PlayerClass")
 
 
 @dataclass
@@ -19,6 +22,10 @@ class Diablo2PlayerClass:
 
     name: str
     code: str
+
+    @classmethod
+    def copy(cls: Type[D2Class], other: "Diablo2PlayerClass") -> D2Class:
+        return cls(other.name, other.code)
 
     def __hash__(self) -> int:
         return hash(f"{self.name}.{self.code}")

@@ -19,3 +19,25 @@ class DataLookupError(D2LfgError):
     """
     Error raised when a data lookup fails.
     """
+
+
+class BHFilterExpressionError(D2LfgError):
+    """
+    Error raised when there is an error related to BH filter expressions.
+    """
+
+
+class InvalidStringConversionError(BHFilterExpressionError):
+    """
+    Error raised when an object is incorrectly converted to a string.
+
+    This is used to prevent users accidentally stringifying something
+    in a context that it should not be.
+    """
+
+
+class TooManyOperandsError(BHFilterExpressionError):
+    """
+    Error raised when a compound filter expression has too many operands
+    for the operator given.
+    """

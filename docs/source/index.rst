@@ -7,6 +7,3 @@
 .. toctree::
    :maxdepth: 2
    :hidden:
-
-   reference
-   tests-reference
