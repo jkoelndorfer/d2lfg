@@ -41,3 +41,10 @@ class TooManyOperandsError(BHFilterExpressionError):
     Error raised when a compound filter expression has too many operands
     for the operator given.
     """
+
+
+class InvalidTxtDirectory(D2LfgError):
+    """
+    Error raised when a directory does not contain all required Diablo 2 .txt
+    data files.
+    """

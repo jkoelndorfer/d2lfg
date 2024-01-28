@@ -1,0 +1,5 @@
+# armor.bin is the "compiled" version of Armor.txt. .bin files are
+# *not* used by d2lfg.
+#
+# This file exists to ensure that extraneous data files are not
+# processed by a Diablo2FilesystemTxtDataSource.
