@@ -5,7 +5,8 @@
 This module contains test typing code.
 """
 
-from typing import Generic, TypeVar
+from pathlib import Path
+from typing import Callable, Generic, TypeVar, Union
 
 from pytest import FixtureRequest as _FixtureRequest
 
@@ -18,3 +19,6 @@ class FixtureRequest(_FixtureRequest, Generic[T]):
     """
 
     param: T
+
+
+PathTyper = Callable[[Path], Union[str, Path]]
