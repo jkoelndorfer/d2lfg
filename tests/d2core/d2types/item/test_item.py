@@ -5,7 +5,16 @@
 Tests :py:class:`d2lfg.d2core.d2types.item.Diablo2ItemType`.
 """
 
-from d2lfg.d2core.d2types.item import Diablo2Item, Diablo2ItemTier, Diablo2ItemTiers
+from d2lfg.d2core.d2types.bodyloc import Diablo2BodyLoc
+from d2lfg.d2core.d2types.item import (
+    Diablo2Item,
+    Diablo2ItemTier,
+    Diablo2ItemTiers,
+    Diablo2ItemType,
+)
+from d2lfg.d2core.d2types.playerclass import Diablo2PlayerClass
+
+Item = Diablo2Item[Diablo2ItemType[Diablo2BodyLoc, Diablo2PlayerClass]]
 
 
 class TestDiablo2Item:
@@ -13,35 +22,35 @@ class TestDiablo2Item:
     Tests :py:class:`~d2lfg.d2core.d2types.item.Diablo2Item`.
     """
 
-    def test_axe_is_equippable(self, axe_item: Diablo2Item) -> None:
+    def test_axe_is_equippable(self, axe_item: Item) -> None:
         """
         Verifies that the axe is equippable.
         """
 
         assert axe_item.equippable()
 
-    def test_axe_is_normal(self, axe_item: Diablo2Item) -> None:
+    def test_axe_is_normal(self, axe_item: Item) -> None:
         """
         Verifies that the axe is a normal tier item.
         """
 
         assert axe_item.tier == Diablo2ItemTiers.NORMAL
 
-    def test_cleaver_is_exceptional(self, cleaver_item: Diablo2Item) -> None:
+    def test_cleaver_is_exceptional(self, cleaver_item: Item) -> None:
         """
         Verifies that the cleaver is an exceptional tier item.
         """
 
         assert cleaver_item.tier == Diablo2ItemTiers.EXCEPTIONAL
 
-    def test_small_crescent_is_elite(self, small_crescent_item: Diablo2Item) -> None:
+    def test_small_crescent_is_elite(self, small_crescent_item: Item) -> None:
         """
         Verifies that the small crescent is an elite tier item.
         """
 
         assert small_crescent_item.tier == Diablo2ItemTiers.ELITE
 
-    def test_amulet_is_normal(self, amulet_item: Diablo2Item) -> None:
+    def test_amulet_is_normal(self, amulet_item: Item) -> None:
         """
         Verifies that the amulet is a normal tier item.
 
@@ -50,7 +59,7 @@ class TestDiablo2Item:
         """
         assert amulet_item.tier == Diablo2ItemTiers.NORMAL
 
-    def test_amulet_is_equippable(self, amulet_item: Diablo2Item) -> None:
+    def test_amulet_is_equippable(self, amulet_item: Item) -> None:
         """
         Verifies that the amulet is equippable.
         """

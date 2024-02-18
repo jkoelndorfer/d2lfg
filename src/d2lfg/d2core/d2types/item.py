@@ -6,15 +6,23 @@ This module contains models for Diablo 2 item types.
 """
 
 from dataclasses import dataclass
-from typing import List, Generator, Optional, Type
+from typing import List, Generator, Generic, Optional, Self, Type, TypeVar
 
 from ...util.d2collection import Diablo2Collection
 from .bodyloc import Diablo2BodyLoc
 from .playerclass import Diablo2PlayerClass
 
 
+BodyLoc = TypeVar("BodyLoc", bound=Diablo2BodyLoc, covariant=True)
+ItemType = TypeVar(
+    "ItemType",
+    bound="Diablo2ItemType[Diablo2BodyLoc, Diablo2PlayerClass]",
+)
+PlayerClass = TypeVar("PlayerClass", bound=Diablo2PlayerClass, covariant=True)
+
+
 @dataclass
-class Diablo2ItemType:
+class Diablo2ItemType(Generic[BodyLoc, PlayerClass]):
     """
     Represents a Diablo 2 item type.
 
@@ -31,28 +39,28 @@ class Diablo2ItemType:
     code: str
 
     #: One of the parent item types.
-    equiv1: Optional["Diablo2ItemType"]
+    equiv1: Optional[Self]
 
     #: One of the parent item types.
-    equiv2: Optional["Diablo2ItemType"]
+    equiv2: Optional[Self]
 
     #: Whether the item type can be equipped or not.
     body: bool
 
     #: One of the body locations where the item type can be equipped.
-    bodyloc1: Optional[Diablo2BodyLoc]
+    bodyloc1: Optional[BodyLoc]
 
     #: One of the body locations where the item type can be equipped.
-    bodyloc2: Optional[Diablo2BodyLoc]
+    bodyloc2: Optional[BodyLoc]
 
     #: The ammunition for this item type. For example, items with type
     #: "bow" use "bowq" (bow quiver) item types as ammunition.
-    shoots: Optional["Diablo2ItemType"]
+    shoots: Optional[Self]
 
     #: The item type that consumes this item type as ammunition.
     #: For example, items with type "bowq" (bow quiver) are used
     #: by "bow" item types.
-    quiver: Optional["Diablo2ItemType"]
+    quiver: Optional[Self]
 
     #: Whether the item type is throwable.
     throwable: bool
@@ -89,18 +97,18 @@ class Diablo2ItemType:
 
     #: The character class that will receive +skill bonuses
     #: from this item type.
-    staffmods: Optional[Diablo2PlayerClass]
+    staffmods: Optional[PlayerClass]
 
     #: The character class that can use this item type.
     #: NOTE: ``class`` is a reserved Python keyword and
     #: not usable here.
-    class_: Optional[Diablo2PlayerClass]
+    class_: Optional[PlayerClass]
 
     #: The code of the store page that this item type will appear
     #: on when sold.
     storepage: Optional[str]
 
-    def all_types(self) -> Generator["Diablo2ItemType", None, None]:
+    def all_types(self) -> Generator[Self, None, None]:
         """
         Yields all of this item's types recursively.
 
@@ -108,7 +116,7 @@ class Diablo2ItemType:
         in turn has types "mele" and "gen". "mele" has type "weap".
         This method would yield all five types.
         """
-        stack: List[Optional[Diablo2ItemType]] = list()
+        stack: List[Optional[Self]] = list()
         stack.append(self)
         while len(stack) > 0:
             current_type = stack.pop()
@@ -118,7 +126,7 @@ class Diablo2ItemType:
             stack.append(current_type.equiv1)
             stack.append(current_type.equiv2)
 
-    def equippable(self) -> bool:
+    def equippable(self: ItemType) -> bool:
         """
         Returns ``True`` if this item is equippable, ``False`` otherwise.
         """
@@ -156,7 +164,7 @@ class Diablo2ItemTiers(Diablo2Collection[Diablo2ItemTier]):
 
 
 @dataclass
-class Diablo2Item:
+class Diablo2Item(Generic[ItemType]):
     """
     Represents a Diablo 2 item.
 
@@ -189,10 +197,10 @@ class Diablo2Item:
     name: str
 
     #: One of the item's types.
-    type: Diablo2ItemType
+    type: ItemType
 
     #: One of the item's types.
-    type2: Optional[Diablo2ItemType]
+    type2: Optional[ItemType]
 
     #: The minimum damage that a weapon can do.
     mindam: Optional[int]

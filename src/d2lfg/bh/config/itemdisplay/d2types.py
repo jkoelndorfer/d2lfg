@@ -12,12 +12,22 @@ to define BH filter expressions and outputs.
 Game databases should return types defined in this file.
 """
 
-from ....d2core.d2types.item import Diablo2Item
+from ....d2core.d2types.bodyloc import Diablo2BodyLoc
+from ....d2core.d2types.item import Diablo2Item, Diablo2ItemType
 from ....d2core.d2types.playerclass import Diablo2PlayerClass
 from .filterexpr import BHFilterExpression
 
 
-class BHDiablo2Item(BHFilterExpression, Diablo2Item):
+class BHDiablo2ItemType(
+    Diablo2ItemType[Diablo2BodyLoc, "BHDiablo2PlayerClassItemRestriction"]
+):
+    """
+    A :py:class:`~d2lfg.d2core.d2types.item.Diablo2ItemType` used by
+    :py:class:`BHDiablo2Item` objects.
+    """
+
+
+class BHDiablo2Item(BHFilterExpression, Diablo2Item[BHDiablo2ItemType]):
     """
     A :py:class:`~d2lfg.d2core.d2types.item.Diablo2Item` that is also
     a :py:class:`~d2lfg.bh.config.itemdisplay.filterexpr.BHFilterExpression`.

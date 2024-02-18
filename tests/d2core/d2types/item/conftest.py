@@ -1,11 +1,15 @@
 import pytest
 
-from d2lfg.d2core.d2types.bodyloc import Diablo2BodyLocs
+from d2lfg.d2core.d2types.bodyloc import Diablo2BodyLoc, Diablo2BodyLocs
 from d2lfg.d2core.d2types.item import Diablo2Item, Diablo2ItemType
+from d2lfg.d2core.d2types.playerclass import Diablo2PlayerClass
+
+ItemType = Diablo2ItemType[Diablo2BodyLoc, Diablo2PlayerClass]
+Item = Diablo2Item[ItemType]
 
 
 @pytest.fixture
-def weap_item_type() -> Diablo2ItemType:
+def weap_item_type() -> ItemType:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2ItemType` representing
     the "weap" (Weapon) type.
@@ -36,7 +40,7 @@ def weap_item_type() -> Diablo2ItemType:
 
 
 @pytest.fixture
-def gen_item_type() -> Diablo2ItemType:
+def gen_item_type() -> ItemType:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2ItemType` representing
     the "gen" (General Weapon) type.
@@ -67,7 +71,7 @@ def gen_item_type() -> Diablo2ItemType:
 
 
 @pytest.fixture
-def mele_item_type(weap_item_type: Diablo2ItemType) -> Diablo2ItemType:
+def mele_item_type(weap_item_type: ItemType) -> ItemType:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2ItemType` representing
     the "mele" (Melee Weapon) type.
@@ -98,9 +102,7 @@ def mele_item_type(weap_item_type: Diablo2ItemType) -> Diablo2ItemType:
 
 
 @pytest.fixture
-def mgen_item_type(
-    gen_item_type: Diablo2ItemType, mele_item_type: Diablo2ItemType
-) -> Diablo2ItemType:
+def mgen_item_type(gen_item_type: ItemType, mele_item_type: ItemType) -> ItemType:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2ItemType` representing
     the "mgen" (general melee) type.
@@ -131,7 +133,7 @@ def mgen_item_type(
 
 
 @pytest.fixture
-def axe_item_type(mgen_item_type: Diablo2ItemType) -> Diablo2ItemType:
+def axe_item_type(mgen_item_type: ItemType) -> ItemType:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2ItemType` representing
     the "axe" type.
@@ -162,7 +164,7 @@ def axe_item_type(mgen_item_type: Diablo2ItemType) -> Diablo2ItemType:
 
 
 @pytest.fixture
-def axe_item(axe_item_type: Diablo2ItemType) -> Diablo2Item:
+def axe_item(axe_item_type: ItemType) -> Item:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2Item` representing the
     ``axe`` item. This item is modeled after actual data taken from
@@ -201,7 +203,7 @@ def axe_item(axe_item_type: Diablo2ItemType) -> Diablo2Item:
 
 
 @pytest.fixture
-def cleaver_item(axe_item_type: Diablo2ItemType) -> Diablo2Item:
+def cleaver_item(axe_item_type: ItemType) -> Item:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2Item` representing the
     ``9ax`` (Cleaver) item. This item is modeled after actual data taken
@@ -240,7 +242,7 @@ def cleaver_item(axe_item_type: Diablo2ItemType) -> Diablo2Item:
 
 
 @pytest.fixture
-def small_crescent_item(axe_item_type: Diablo2ItemType) -> Diablo2Item:
+def small_crescent_item(axe_item_type: ItemType) -> Item:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2Item` representing the
     ``7ax`` (Small Crescent) item. This item is modeled after actual data
@@ -279,7 +281,7 @@ def small_crescent_item(axe_item_type: Diablo2ItemType) -> Diablo2Item:
 
 
 @pytest.fixture
-def misc_item_type() -> Diablo2ItemType:
+def misc_item_type() -> ItemType:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2ItemType` representing
     the "misc" (Miscellaneous) type.
@@ -310,7 +312,7 @@ def misc_item_type() -> Diablo2ItemType:
 
 
 @pytest.fixture
-def amul_item_type(misc_item_type: Diablo2ItemType) -> Diablo2ItemType:
+def amul_item_type(misc_item_type: ItemType) -> ItemType:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2ItemType` representing
     the "amul" (Amulet) type.
@@ -341,7 +343,7 @@ def amul_item_type(misc_item_type: Diablo2ItemType) -> Diablo2ItemType:
 
 
 @pytest.fixture
-def amulet_item(amul_item_type: Diablo2ItemType) -> Diablo2Item:
+def amulet_item(amul_item_type: ItemType) -> Item:
     """
     A :py:class:`d2lfg.d2core.d2types.item.Diablo2Item` representing an
     ``amu`` (amulet). This item is modeled after actual data from Misc.txt.

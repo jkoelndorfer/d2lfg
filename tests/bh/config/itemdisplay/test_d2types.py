@@ -9,9 +9,9 @@ import pytest
 
 from tests.testhelper.typing import FixtureRequest
 
-from d2lfg.d2core.d2types.item import Diablo2ItemType
 from d2lfg.d2core.d2types.playerclass import Diablo2PlayerClasses, Diablo2PlayerClass
 from d2lfg.bh.config.itemdisplay.d2types import (
+    BHDiablo2ItemType,
     BHDiablo2CurrentPlayerClass,
     BHDiablo2PlayerClassItemRestriction,
     BHDiablo2Item,
@@ -24,12 +24,12 @@ def player_class(request: FixtureRequest[Diablo2PlayerClass]) -> Diablo2PlayerCl
 
 
 @pytest.fixture
-def misc_item_type() -> Diablo2ItemType:
+def misc_item_type() -> BHDiablo2ItemType:
     """
     A :py:class:`~d2lfg.d2core.d2types.item.Diablo2ItemType` representing
     the "misc" (Miscellaneous) type.
     """
-    return Diablo2ItemType(
+    return BHDiablo2ItemType(
         name="Miscellaneous",
         code="misc",
         equiv1=None,
@@ -55,7 +55,7 @@ def misc_item_type() -> Diablo2ItemType:
 
 
 @pytest.fixture
-def amulet(misc_item_type: Diablo2ItemType) -> BHDiablo2Item:
+def amulet(misc_item_type: BHDiablo2ItemType) -> BHDiablo2Item:
     """
     A :py:class:`~d2lfg.bh.config.itemdisplay.d2types.BHDiablo2Item`
     for testing.
