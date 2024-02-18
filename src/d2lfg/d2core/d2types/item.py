@@ -127,7 +127,7 @@ class Diablo2ItemType:
 
 class Diablo2ItemTier(Enum):
     """
-    :py:class:`~enum.Enum` describing the tiers an item
+    :py:class:`~enum.Enum` describing the tiers an item can have.
     """
 
     NORM = NORMAL = "NORM"
