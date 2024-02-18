@@ -6,9 +6,9 @@ This module contains models for Diablo 2 item types.
 """
 
 from dataclasses import dataclass
-from enum import Enum
-from typing import List, Generator, Optional
+from typing import List, Generator, Optional, Type
 
+from ...util.d2collection import Diablo2Collection
 from .bodyloc import Diablo2BodyLoc
 from .playerclass import Diablo2PlayerClass
 
@@ -125,14 +125,34 @@ class Diablo2ItemType:
         return any(it.body for it in self.all_types())
 
 
-class Diablo2ItemTier(Enum):
+@dataclass
+class Diablo2ItemTier:
     """
-    :py:class:`~enum.Enum` describing the tiers an item can have.
+    Represents a Diablo 2 item tier.
     """
 
-    NORM = NORMAL = "NORM"
-    UBER = EXCEPTIONAL = "UBER"
-    ULTRA = ELITE = "ULTRA"
+    #: The name of the item tier.
+    name: str
+
+    #: The code of the item tier (i.e. how it is referred to in .txt file columns).
+    code: str
+
+    def __hash__(self) -> int:
+        return hash(f"{self.name}{self.code}")
+
+
+class Diablo2ItemTiers(Diablo2Collection[Diablo2ItemTier]):
+    """
+    A collection describing the item tiers an item can have.
+    """
+
+    NORM = NORMAL = Diablo2ItemTier("normal", "norm")
+    UBER = EXCEPTIONAL = Diablo2ItemTier("exceptional", "uber")
+    ULTRA = ELITE = Diablo2ItemTier("elite", "ultra")
+
+    @classmethod
+    def collection_type(cls) -> Type[Diablo2ItemTier]:
+        return Diablo2ItemTier
 
 
 @dataclass
@@ -260,13 +280,13 @@ class Diablo2Item:
         Returns the item tier of this item: one of normal, exceptional, or elite.
         """
         if self.code == self.normcode:
-            return Diablo2ItemTier.NORMAL
+            return Diablo2ItemTiers.NORMAL
         elif self.code == self.ubercode:
-            return Diablo2ItemTier.EXCEPTIONAL
+            return Diablo2ItemTiers.EXCEPTIONAL
         elif self.code == self.ultracode:
-            return Diablo2ItemTier.ELITE
+            return Diablo2ItemTiers.ELITE
 
         # TODO: Items in Misc.txt do not have normcode, ubercode, or ultracode
         # specified. Are they considered "normal" tier or do they not have a
         # tier?
-        return Diablo2ItemTier.NORMAL
+        return Diablo2ItemTiers.NORMAL
