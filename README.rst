@@ -23,7 +23,7 @@ need to have these txt files extracted somewhere.
 Requirements
 ------------
 
-d2lfg requires `Python`_ 3.8 or later to run. It does not
+d2lfg requires `Python`_ 3.12 or later to run. It does not
 have any runtime dependencies.
 
 .. _Project Diablo 2: https://projectdiablo2.com/

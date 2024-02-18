@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PYTHON_STATIC_CHECK_VERSION: "3.8"
+  PYTHON_STATIC_CHECK_VERSION: "3.12"
   TOX_VERSION: ">= 4.11.4, < 5"
 
 jobs:
@@ -49,10 +49,6 @@ jobs:
       fail-fast: false
       matrix:
         py:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
           - "3.12"
         os:
           - ubuntu-latest
